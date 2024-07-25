@@ -1,13 +1,26 @@
-[gd_scene load_steps=3 format=3 uid="uid://ceox7v6p25unb"]
+[gd_scene load_steps=5 format=3 uid="uid://ceox7v6p25unb"]
 
-[ext_resource type="TileSet" uid="uid://c1tgrgs3ys4wn" path="res://Assets/Levels/Walls.tres" id="1_7reon"]
+[ext_resource type="TileSet" uid="uid://c1tgrgs3ys4wn" path="res://Assets/Levels/Tilesets/Walls.tres" id="1_7reon"]
 [ext_resource type="Script" path="res://Assets/Levels/Level.gd" id="1_rok26"]
+[ext_resource type="TileSet" uid="uid://bk1b8h00etn7q" path="res://Assets/Levels/Tilesets/Entities.tres" id="2_6agm3"]
+[ext_resource type="Script" path="res://Assets/Levels/ObjectProcess.gd" id="2_na5lr"]
 
 [node name="Level" type="Node2D"]
 script = ExtResource("1_rok26")
 
-[node name="Walls" type="TileMap" parent="."]
-tile_set = ExtResource("1_7reon")
+[node name="Camera" type="Camera2D" parent="."]
+
+[node name="Objects" type="Node2D" parent="."]
+script = ExtResource("2_na5lr")
+
+[node name="Animation" type="TileMap" parent="Objects"]
+tile_set = ExtResource("2_6agm3")
 format = 2
 
-[node name="Camera" type="Camera2D" parent="."]
+[node name="Entities" type="TileMap" parent="Objects"]
+tile_set = ExtResource("2_6agm3")
+format = 2
+
+[node name="Walls" type="TileMap" parent="Objects"]
+tile_set = ExtResource("1_7reon")
+format = 2

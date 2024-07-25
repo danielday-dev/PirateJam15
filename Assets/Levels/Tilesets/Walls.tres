@@ -1,10 +1,10 @@
 [gd_resource type="TileSet" load_steps=3 format=3 uid="uid://c1tgrgs3ys4wn"]
 
-[ext_resource type="Texture2D" uid="uid://bx3bgen4axlgi" path="res://Assets/Levels/TilemapExample.png" id="1_knb2i"]
+[ext_resource type="Texture2D" uid="uid://bx3bgen4axlgi" path="res://Assets/Levels/Tilesets/Walls.png" id="1_8iwln"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_w3c7v"]
-texture = ExtResource("1_knb2i")
-texture_region_size = Vector2i(64, 64)
+texture = ExtResource("1_8iwln")
+texture_region_size = Vector2i(36, 36)
 use_texture_padding = false
 0:0/0 = 0
 0:0/0/terrain_set = 0
@@ -339,7 +339,7 @@ use_texture_padding = false
 11:3/0/terrains_peering_bit/top_side = 0
 
 [resource]
-tile_size = Vector2i(64, 64)
+tile_size = Vector2i(36, 36)
 terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "Walls"
 terrain_set_0/terrain_0/color = Color(0, 0.39536, 0.672064, 1)
