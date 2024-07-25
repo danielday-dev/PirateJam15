@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3 uid="uid://dc1f2ce4tmjiu"]
+
+[ext_resource type="PackedScene" uid="uid://8bn5wiq2ayda" path="res://Assets/LevelSelect/LevelGoto.tscn" id="1_ar7pr"]
+[ext_resource type="Script" path="res://Assets/LevelSelect/LevelSelect.gd" id="1_re3p7"]
+
+[node name="LevelSelector" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 640.0
+offset_bottom = 360.0
+script = ExtResource("1_re3p7")
+levelGoto = ExtResource("1_ar7pr")
+
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="VBox" type="VBoxContainer" parent="HBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="Grid" type="GridContainer" parent="HBox/VBox"]
+layout_mode = 2
+columns = 4
