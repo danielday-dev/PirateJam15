@@ -62,10 +62,8 @@ func processInput():
 	# Animation start.
 	$Entities.set_cell(0, playerPos);
 	$Animation.set_cell(0, playerPos, playerSource, playerAtlas);
+	animationTileTargetOffset = movement
 	# Set animation state stuff.
-	animationSource = playerSource;
-	animationAtlas = playerAtlas;
-	animationTarget = targetPos;
 	animationProcessing = true;
 	# Reset pos + set target.
 	$Animation.global_position = Vector2.ZERO;
@@ -77,9 +75,7 @@ func processInput():
 var animationProcessing : bool = false;
 var animationProgress : float = 0;
 var animationMoveTarget : Vector2 = Vector2.ZERO;
-var animationSource : int;
-var animationAtlas : Vector2i;
-var animationTarget : Vector2i = Vector2.ZERO;
+var animationTileTargetOffset : Vector2i = Vector2i.ZERO;
 func processAnimation(delta):
 	# Update animation progress.
 	animationProgress = min(animationProgress + (delta / animationTime), 1.0);
@@ -91,5 +87,17 @@ func processAnimation(delta):
 	
 	# Animation end.
 	animationProcessing = false;
+	var animationRect : Rect2i = $Animation.get_used_rect();
+	
+	# Copy animation tilemap to entities.
+	for x in range(animationRect.size.x):
+		for y in range(animationRect.size.y):
+			var pos : Vector2i = animationRect.position + Vector2i(x, y);
+			if ($Animation.get_cell_source_id(0, pos) != -1):
+				$Entities.set_cell(
+					0, pos + animationTileTargetOffset, 
+					$Animation.get_cell_source_id(0, pos), 
+					$Animation.get_cell_atlas_coords(0, pos)
+				);
+	# Clear animation tilemap.
 	$Animation.clear();
-	$Entities.set_cell(0, animationTarget, animationSource, animationAtlas);
