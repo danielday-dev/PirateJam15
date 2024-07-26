@@ -18,7 +18,12 @@ func getPlayerPos() -> Array:
 func checkIfWall(pos : Vector2i) -> bool:
 	var wallRect : Rect2i = $Walls.get_used_rect();
 	if (!wallRect.has_point(pos)): return false;
-	return $Walls.get_cell_source_id(0, pos) == 0;
+	return $Walls.get_cell_source_id(0, pos) != -1;
+	
+func checkIfEntity(pos : Vector2i) -> bool:
+	var entityRect : Rect2i = $Entities.get_used_rect();
+	if (!entityRect.has_point(pos)): return false;
+	return $Entities.get_cell_source_id(0, pos) != -1;
 
 var inputMovementLastPrioritizedY : bool = false;
 func processInput():
@@ -47,17 +52,24 @@ func processInput():
 	var targetPos : Vector2i = playerPos + movement;
 	if (checkIfWall(targetPos)): return
 	
-	# Get target information.
-	var entityRect : Rect2i = $Entities.get_used_rect();
-	var targetInEntityRect = entityRect.has_point(targetPos);	
-	
+	# Make sure an entity isnt in the way.
+	if (checkIfEntity(targetPos)): 
+		# Check if entity is blocked.
+		var entityTargetPos : Vector2i = targetPos + movement;
+		if (checkIfWall(entityTargetPos) || checkIfEntity(entityTargetPos)):
+			return;
+		
+		# TODO: Check if entity is pushable.
+
+		# Set animation data.
+		var entitySource : int = $Entities.get_cell_source_id(0, targetPos);
+		var entityAtlas : Vector2i = $Entities.get_cell_atlas_coords(0, targetPos);
+		$Entities.set_cell(0, targetPos);
+		$Animation.set_cell(0, targetPos, entitySource, entityAtlas);
+		
 	# Get player information.
 	var playerSource : int = $Entities.get_cell_source_id(0, playerPos);
 	var playerAtlas : Vector2i = $Entities.get_cell_atlas_coords(0, playerPos);
-	
-	# Make sure an entity isnt in the way.
-	# TODO: Process entity push.
-	if (targetInEntityRect && $Entities.get_cell_source_id(0, targetPos) != -1): return;
 	
 	# Animation start.
 	$Entities.set_cell(0, playerPos);
