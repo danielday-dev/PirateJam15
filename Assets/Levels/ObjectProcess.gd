@@ -7,6 +7,8 @@ enum EntityTileType {
 	EntityTileType_Box,
 	EntityTileType_Light,
 	EntityTileType_LightButton,
+	EntityTileType_DoorOpen,
+	EntityTileType_DoorClose,
 };
 
 func onEntityMove(entityType : EntityTileType, from : Vector2i, to : Vector2i) -> void:
@@ -24,13 +26,23 @@ func isEntityTypeSolid(entityType : EntityTileType) -> bool:
 	match (entityType):
 		EntityTileType.EntityTileType_None, EntityTileType.EntityTileType_Player: return false;
 		EntityTileType.EntityTileType_LightButton: return false;
+		
+		EntityTileType.EntityTileType_DoorOpen: return false;
+		EntityTileType.EntityTileType_DoorClose: return true;
 	return true;
+	
+func isEntityTypePushable(entityType : EntityTileType) -> bool:
+	match (entityType):
+		EntityTileType.EntityTileType_DoorOpen, EntityTileType.EntityTileType_DoorClose: return false;
+	return true;
+
 
 func getEntityTypeFromAtlas(atlas : Vector2i) -> EntityTileType:
 	match (atlas.x):
 		0: return EntityTileType.EntityTileType_Player;
 		1: return EntityTileType.EntityTileType_Box;
 		2, 3, 4, 5, 6, 7, 8: return EntityTileType.EntityTileType_Light;
+		9: return EntityTileType.EntityTileType_DoorClose if atlas.y == 0 else EntityTileType.EntityTileType_DoorOpen;
 		
 	return EntityTileType.EntityTileType_None;
 	
@@ -83,8 +95,16 @@ class LightButton:
 		position = _position;
 		color = _color;
 		lit = false;
+		
+class Door:
+	var position : Vector2i;
+	var open : bool;
+	func _init(_position : Vector2i):
+		position = _position;
+		open = false;
 
 var lightButtons : Array[LightButton];
+var doors : Array[Door];
 func registerLighting():
 	$Lighting.clearEmitters();
 	
@@ -101,6 +121,9 @@ func registerLighting():
 					
 					$Lighting.addEmitter(Lighting.Emitter.new(pos, color, direction));
 					
+				EntityTileType.EntityTileType_DoorClose:
+					doors.push_back(Door.new(pos));
+					
 	var backgroundRect : Rect2i = $BackgroundEntities.get_used_rect();
 	for x in range(backgroundRect.size.x):
 		for y in range(backgroundRect.size.y):
@@ -112,9 +135,12 @@ func registerLighting():
 					var color : int = buttonCoord.x + 1;
 					
 					lightButtons.push_back(LightButton.new(pos, color));
+				
+					
 
 func updateLighting():
 	$Lighting.updateLighting();
+	var postLightingUpdateNeeded : bool = false;
 	
 	# Process buttons.
 	for lightButton : LightButton in lightButtons:
@@ -131,8 +157,30 @@ func updateLighting():
 	
 		$Wiring.setInput(lightButton.position, lightButton.lit);	
 	
-	if ($Wiring.getOuput(Vector2i(2, 2))): 
-		print("THE GOING FORTHE PAENTAGON");
+	for door : Door in doors:
+		var open = $Wiring.getOuput(door.position);
+		
+		if (door.open == open): continue;
+		door.open = open;
+		postLightingUpdateNeeded = true;
+	
+		if (!door.open):
+			$Entities.set_cell(
+				0, door.position, 
+				0,
+				Vector2i(9, 0),
+			);
+			$BackgroundEntities.set_cell(0, door.position);
+		else:
+			$BackgroundEntities.set_cell(
+				0, door.position, 
+				0,
+				Vector2i(7, 0),
+			);
+			$Entities.set_cell(0, door.position);
+	
+	if (postLightingUpdateNeeded):
+		$Lighting.updateLighting();
 	
 func _ready():
 	registerLighting();
@@ -173,6 +221,9 @@ func processInput():
 	
 	# Make sure an entity isnt in the way.
 	if (checkIfEntity(targetPos)): 
+		if (!isEntityTypePushable(getEntityTileType(targetPos))): 
+			return;
+		
 		# Check if entity is blocked.
 		var entityTargetPos : Vector2i = targetPos + movement;
 		if (checkIfWall(entityTargetPos) || (checkIfEntity(entityTargetPos) && isEntityTypeSolid(getEntityTileType(entityTargetPos)))):
