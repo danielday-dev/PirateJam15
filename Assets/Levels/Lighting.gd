@@ -22,8 +22,10 @@ class Emitter:
 		direction = _direction;
 var emitters : Array[Emitter] = [];
 
-func checkIfWall(pos : Vector2i) -> bool:
-	return get_parent().checkIfWall(pos);
+func checkIfSolid(pos : Vector2i) -> bool:
+	if (get_parent().checkIfWall(pos)): return true;
+	var entityType : ObjectProcess.EntityTileType = get_parent().getEntityTileType(pos);
+	return get_parent().isEntityTypeSolid(entityType);
 	
 enum LightingValue {
 	Red = 1 << 0,
@@ -50,6 +52,8 @@ var lightingData : Dictionary = {};
 func updateLighting(): 
 	lightingData.clear();
 	
+	print("So we got here?");
+	
 	for emitter in emitters:
 		var pos : Vector2i = emitter.position;
 		
@@ -64,10 +68,8 @@ func updateLighting():
 				Direction.Direction_Down: pos.y += 1;
 				Direction.Direction_Left: pos.x -= 1;
 			
-			if (checkIfWall(pos)):
+			if (checkIfSolid(pos)):
 				break;
-			
-			
 			
 			var lightingDataPos : Array = [
 				LightingInformation.new(Direction.Direction_Up),
@@ -85,7 +87,7 @@ func updateLighting():
 			else:
 				lightingData[pos] = lightingDataPos;
 	
-	_draw();
+	queue_redraw();
 
 func propagateLighting(pos : Vector2i, color : int, fromDirection : Direction) -> int:
 	if (!lightingData.has(pos)): 
@@ -128,10 +130,6 @@ func propagateLighting(pos : Vector2i, color : int, fromDirection : Direction) -
 	return totalColor;
 
 func _ready():
-	emitters.push_back(Emitter.new(Vector2i(-2, 1), LightingValue.Red, Direction.Direction_Up))
-	emitters.push_back(Emitter.new(Vector2i(-5, -1), LightingValue.Blue, Direction.Direction_Right))
-	emitters.push_back(Emitter.new(Vector2i(-3, 2), LightingValue.Green, Direction.Direction_Up))
-	emitters.push_back(Emitter.new(Vector2i(0, -3), LightingValue.Blue, Direction.Direction_Down))
 	updateLighting();
 
 func addEmitter(emitter : Emitter) -> bool:
@@ -158,10 +156,11 @@ func moveEmitter(emitterPos : Vector2i, newPos : Vector2i):
 	if (addEmitter(Emitter.new(newPos, emitter.color, emitter.direction))):
 		removeEmitter(emitterPos);
 	
-func _draw():
-	const lightingWidth = 4;
+func clearEmitters():
+	emitters.clear();
 	
-	draw_rect(Rect2(0, 0, tileScale, tileScale), Color.ORANGE);
+func _draw():
+	const lightingWidth = 8;
 	
 	for pos in lightingData:
 		var midPoint : Vector2 = Vector2(pos) + Vector2(0.5, 0.5);

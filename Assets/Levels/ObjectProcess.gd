@@ -1,10 +1,43 @@
-extends Node2D
+extends Node2D;
+class_name ObjectProcess;
 
-func _process(delta):
-	if (animationProcessing): 
-		processAnimation(delta);
-	else: 
-		processInput();
+enum EntityTileType {
+	EntityTileType_None,
+	EntityTileType_Player,
+	EntityTileType_Box,
+	EntityTileType_Light,
+};
+
+func onEntityMove(entityType : EntityTileType, from : Vector2i, to : Vector2i) -> void:
+	match (entityType):
+		EntityTileType.EntityTileType_Player:
+			return;
+		
+		EntityTileType.EntityTileType_Light:
+			$Lighting.moveEmitter(from, to);
+	
+	$Lighting.updateLighting();			
+
+func isEntityTypeSolid(entityType : EntityTileType) -> bool:
+	match (entityType):
+		EntityTileType.EntityTileType_None, EntityTileType.EntityTileType_Player: return false;
+	return true;
+
+func getEntityTypeFromAtlas(atlas : Vector2i) -> EntityTileType:
+	match (atlas.x):
+		0: return EntityTileType.EntityTileType_Player;
+		1: return EntityTileType.EntityTileType_Box;
+		2, 3, 4, 5, 6, 7, 8: return EntityTileType.EntityTileType_Light;
+		
+	return EntityTileType.EntityTileType_None;
+	
+func getEntityTileType(pos : Vector2i) -> EntityTileType:
+	var entityRect : Rect2i = $Entities.get_used_rect();
+	if (!entityRect.has_point(pos)): return EntityTileType.EntityTileType_None;
+	if ($Entities.get_cell_source_id(0, pos) == -1): return EntityTileType.EntityTileType_None;
+	
+	return getEntityTypeFromAtlas($Entities.get_cell_atlas_coords(0, pos));
+	
 
 func getPlayerPos() -> Array:
 	var entityRect : Rect2i = $Entities.get_used_rect();
@@ -24,6 +57,35 @@ func checkIfEntity(pos : Vector2i) -> bool:
 	var entityRect : Rect2i = $Entities.get_used_rect();
 	if (!entityRect.has_point(pos)): return false;
 	return $Entities.get_cell_source_id(0, pos) != -1;
+	
+	
+func registerLighting():
+	$Lighting.clearEmitters();
+	
+	var entityRect : Rect2i = $Entities.get_used_rect();
+	for x in range(entityRect.size.x):
+		for y in range(entityRect.size.y):
+			var pos : Vector2i = Vector2i(x, y) + entityRect.position;
+			if (getEntityTileType(pos) != EntityTileType.EntityTileType_Light): continue;
+			
+			var lightCoord : Vector2i = $Entities.get_cell_atlas_coords(0, pos);
+			
+			if (lightCoord.y == 0): continue;
+			
+			var direction : Lighting.Direction = lightCoord.y - 1;
+			var color : int = lightCoord.x - 1;
+			
+			$Lighting.addEmitter(Lighting.Emitter.new(pos, color, direction))
+	$Lighting.updateLighting();
+	
+func _ready():
+	registerLighting();
+	
+func _process(delta):
+	if (animationProcessing): 
+		processAnimation(delta);
+	else: 
+		processInput();
 
 var inputMovementLastPrioritizedY : bool = false;
 func processInput():
@@ -106,10 +168,13 @@ func processAnimation(delta):
 		for y in range(animationRect.size.y):
 			var pos : Vector2i = animationRect.position + Vector2i(x, y);
 			if ($Animation.get_cell_source_id(0, pos) != -1):
+				var atlas : Vector2i = $Animation.get_cell_atlas_coords(0, pos);
 				$Entities.set_cell(
 					0, pos + animationTileTargetOffset, 
 					$Animation.get_cell_source_id(0, pos), 
-					$Animation.get_cell_atlas_coords(0, pos)
+					atlas
 				);
+				var entityType : EntityTileType = getEntityTypeFromAtlas(atlas);
+				onEntityMove(entityType, pos, pos + animationTileTargetOffset);
 	# Clear animation tilemap.
 	$Animation.clear();
