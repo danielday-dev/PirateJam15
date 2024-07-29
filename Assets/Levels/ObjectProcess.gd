@@ -15,6 +15,7 @@ func onEntityMove(entityType : EntityTileType, from : Vector2i, to : Vector2i) -
 		
 		EntityTileType.EntityTileType_Light:
 			$Lighting.moveEmitter(from, to);
+			$Lighting.enableEmitter(to);
 	
 	$Lighting.updateLighting();			
 
@@ -76,10 +77,10 @@ func registerLighting():
 			var color : int = lightCoord.x - 1;
 			
 			$Lighting.addEmitter(Lighting.Emitter.new(pos, color, direction))
-	$Lighting.updateLighting();
 	
 func _ready():
 	registerLighting();
+	$Lighting.updateLighting();
 	
 func _process(delta):
 	if (animationProcessing): 
@@ -128,6 +129,11 @@ func processInput():
 		var entityAtlas : Vector2i = $Entities.get_cell_atlas_coords(0, targetPos);
 		$Entities.set_cell(0, targetPos);
 		$Animation.set_cell(0, targetPos, entitySource, entityAtlas);
+		
+		match (getEntityTypeFromAtlas(entityAtlas)):
+			EntityTileType.EntityTileType_Light:
+				$Lighting.disableEmitter(targetPos);
+				$Lighting.updateLighting();
 		
 	# Get player information.
 	var playerSource : int = $Entities.get_cell_source_id(0, playerPos);

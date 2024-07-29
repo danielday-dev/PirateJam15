@@ -13,13 +13,16 @@ func flipDirection(direction : Direction) -> Direction:
 	return (direction + 2) % 4;
 
 class Emitter:
+	var enabled : bool;
 	var position : Vector2i;
 	var color : int;
 	var direction : Direction;
 	func _init(_position : Vector2i, _color : int, _direction : Direction):
+		enabled = true;
 		position = _position;
 		color = _color;
 		direction = _direction;
+		
 var emitters : Array[Emitter] = [];
 
 func checkIfSolid(pos : Vector2i) -> bool:
@@ -52,9 +55,8 @@ var lightingData : Dictionary = {};
 func updateLighting(): 
 	lightingData.clear();
 	
-	print("So we got here?");
-	
 	for emitter in emitters:
+		if (!emitter.enabled): continue;
 		var pos : Vector2i = emitter.position;
 		
 		var color : int = emitter.color;
@@ -155,6 +157,18 @@ func moveEmitter(emitterPos : Vector2i, newPos : Vector2i):
 	
 	if (addEmitter(Emitter.new(newPos, emitter.color, emitter.direction))):
 		removeEmitter(emitterPos);
+	
+func enableEmitter(emitterPos : Vector2i):
+	for emitter : Emitter in emitters:
+		if (emitter.position == emitterPos):
+			emitter.enabled = true;
+			break;
+			
+func disableEmitter(emitterPos : Vector2i):
+	for emitter : Emitter in emitters:
+		if (emitter.position == emitterPos):
+			emitter.enabled = false;
+			break;
 	
 func clearEmitters():
 	emitters.clear();
