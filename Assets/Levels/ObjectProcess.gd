@@ -78,9 +78,11 @@ func checkIfEntity(pos : Vector2i) -> bool:
 class LightButton:
 	var position : Vector2i;
 	var color : int;
+	var lit : bool;
 	func _init(_position : Vector2i, _color : int):
 		position = _position;
 		color = _color;
+		lit = false;
 
 var lightButtons : Array[LightButton];
 func registerLighting():
@@ -118,11 +120,19 @@ func updateLighting():
 	for lightButton : LightButton in lightButtons:
 		var lightLit : bool = $Lighting.lightingData.has(lightButton.position) && $Lighting.lightingData[lightButton.position].color == lightButton.color;
 		
+		if (lightButton.lit == lightLit): continue;
+		lightButton.lit = lightLit;
+		
 		$BackgroundEntities.set_cell(
 			0, lightButton.position, 
 			$BackgroundEntities.get_cell_source_id(0, lightButton.position),
-			Vector2i(lightButton.color - 1, 1 if lightLit else 0),
+			Vector2i(lightButton.color - 1, 1 if lightButton.lit else 0),
 		);
+	
+		$Wiring.setInput(lightButton.position, lightButton.lit);	
+	
+	if ($Wiring.getOuput(Vector2i(2, 2))): 
+		print("THE GOING FORTHE PAENTAGON");
 	
 func _ready():
 	registerLighting();

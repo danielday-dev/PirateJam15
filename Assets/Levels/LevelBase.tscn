@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://ceox7v6p25unb"]
+[gd_scene load_steps=9 format=3 uid="uid://ceox7v6p25unb"]
 
 [ext_resource type="TileSet" uid="uid://c1tgrgs3ys4wn" path="res://Assets/Levels/Tilesets/Walls.tres" id="1_7reon"]
 [ext_resource type="Script" path="res://Assets/Levels/Level.gd" id="1_rok26"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://Assets/Levels/ObjectProcess.gd" id="2_na5lr"]
 [ext_resource type="TileSet" uid="uid://bwvt7r64dbdjs" path="res://Assets/Levels/Tilesets/BackgroundEntities.tres" id="4_l05dv"]
 [ext_resource type="Script" path="res://Assets/Levels/Lighting.gd" id="5_d8cb2"]
+[ext_resource type="Script" path="res://Assets/Levels/Wiring.gd" id="7_qv88h"]
 
 [sub_resource type="Curve" id="Curve_214x6"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.554585, 0.241758), 0.0, 0.0, 0, 0, Vector2(1, 1), 5.17277, 0.0, 0, 0]
@@ -38,3 +39,6 @@ format = 2
 [node name="Walls" type="TileMap" parent="Objects"]
 tile_set = ExtResource("1_7reon")
 format = 2
+
+[node name="Wiring" type="Node2D" parent="Objects"]
+script = ExtResource("7_qv88h")
