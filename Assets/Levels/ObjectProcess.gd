@@ -6,6 +6,7 @@ enum EntityTileType {
 	EntityTileType_Player,
 	EntityTileType_Box,
 	EntityTileType_Light,
+	EntityTileType_LightButton,
 };
 
 func onEntityMove(entityType : EntityTileType, from : Vector2i, to : Vector2i) -> void:
@@ -17,11 +18,12 @@ func onEntityMove(entityType : EntityTileType, from : Vector2i, to : Vector2i) -
 			$Lighting.moveEmitter(from, to);
 			$Lighting.enableEmitter(to);
 	
-	$Lighting.updateLighting();			
+	updateLighting();			
 
 func isEntityTypeSolid(entityType : EntityTileType) -> bool:
 	match (entityType):
 		EntityTileType.EntityTileType_None, EntityTileType.EntityTileType_Player: return false;
+		EntityTileType.EntityTileType_LightButton: return false;
 	return true;
 
 func getEntityTypeFromAtlas(atlas : Vector2i) -> EntityTileType:
@@ -32,6 +34,7 @@ func getEntityTypeFromAtlas(atlas : Vector2i) -> EntityTileType:
 		
 	return EntityTileType.EntityTileType_None;
 	
+		
 func getEntityTileType(pos : Vector2i) -> EntityTileType:
 	var entityRect : Rect2i = $Entities.get_used_rect();
 	if (!entityRect.has_point(pos)): return EntityTileType.EntityTileType_None;
@@ -39,6 +42,19 @@ func getEntityTileType(pos : Vector2i) -> EntityTileType:
 	
 	return getEntityTypeFromAtlas($Entities.get_cell_atlas_coords(0, pos));
 	
+	
+func getBackgroundEntityTypeFromAtlas(atlas : Vector2i) -> EntityTileType:
+	match (atlas.x):
+		0, 1, 2, 3, 4, 5, 6: return EntityTileType.EntityTileType_LightButton;
+	return EntityTileType.EntityTileType_None;
+	
+func getBackgroundEntityTileType(pos : Vector2i) -> EntityTileType:
+	var backgroundRect : Rect2i = $BackgroundEntities.get_used_rect();
+	if (!backgroundRect.has_point(pos)): return EntityTileType.EntityTileType_None;
+	if ($BackgroundEntities.get_cell_source_id(0, pos) == -1): return EntityTileType.EntityTileType_None;
+	
+	return getBackgroundEntityTypeFromAtlas($BackgroundEntities.get_cell_atlas_coords(0, pos));
+
 
 func getPlayerPos() -> Array:
 	var entityRect : Rect2i = $Entities.get_used_rect();
@@ -59,7 +75,14 @@ func checkIfEntity(pos : Vector2i) -> bool:
 	if (!entityRect.has_point(pos)): return false;
 	return $Entities.get_cell_source_id(0, pos) != -1;
 	
-	
+class LightButton:
+	var position : Vector2i;
+	var color : int;
+	func _init(_position : Vector2i, _color : int):
+		position = _position;
+		color = _color;
+
+var lightButtons : Array[LightButton];
 func registerLighting():
 	$Lighting.clearEmitters();
 	
@@ -67,20 +90,43 @@ func registerLighting():
 	for x in range(entityRect.size.x):
 		for y in range(entityRect.size.y):
 			var pos : Vector2i = Vector2i(x, y) + entityRect.position;
-			if (getEntityTileType(pos) != EntityTileType.EntityTileType_Light): continue;
-			
-			var lightCoord : Vector2i = $Entities.get_cell_atlas_coords(0, pos);
-			
-			if (lightCoord.y == 0): continue;
-			
-			var direction : Lighting.Direction = lightCoord.y - 1;
-			var color : int = lightCoord.x - 1;
-			
-			$Lighting.addEmitter(Lighting.Emitter.new(pos, color, direction))
+			match (getEntityTileType(pos)):
+				EntityTileType.EntityTileType_Light:
+					var lightCoord : Vector2i = $Entities.get_cell_atlas_coords(0, pos);
+					
+					var direction : Lighting.Direction = lightCoord.y;
+					var color : int = lightCoord.x - 1;
+					
+					$Lighting.addEmitter(Lighting.Emitter.new(pos, color, direction));
+					
+	var backgroundRect : Rect2i = $BackgroundEntities.get_used_rect();
+	for x in range(backgroundRect.size.x):
+		for y in range(backgroundRect.size.y):
+			var pos : Vector2i = Vector2i(x, y) + backgroundRect.position;
+			match (getBackgroundEntityTileType(pos)):
+				EntityTileType.EntityTileType_LightButton:
+					var buttonCoord : Vector2i = $BackgroundEntities.get_cell_atlas_coords(0, pos);
+					
+					var color : int = buttonCoord.x + 1;
+					
+					lightButtons.push_back(LightButton.new(pos, color));
+
+func updateLighting():
+	$Lighting.updateLighting();
+	
+	# Process buttons.
+	for lightButton : LightButton in lightButtons:
+		var lightLit : bool = $Lighting.lightingData.has(lightButton.position) && $Lighting.lightingData[lightButton.position].color == lightButton.color;
+		
+		$BackgroundEntities.set_cell(
+			0, lightButton.position, 
+			$BackgroundEntities.get_cell_source_id(0, lightButton.position),
+			Vector2i(lightButton.color - 1, 1 if lightLit else 0),
+		);
 	
 func _ready():
 	registerLighting();
-	$Lighting.updateLighting();
+	updateLighting();
 	
 func _process(delta):
 	if (animationProcessing): 
@@ -119,7 +165,7 @@ func processInput():
 	if (checkIfEntity(targetPos)): 
 		# Check if entity is blocked.
 		var entityTargetPos : Vector2i = targetPos + movement;
-		if (checkIfWall(entityTargetPos) || checkIfEntity(entityTargetPos)):
+		if (checkIfWall(entityTargetPos) || (checkIfEntity(entityTargetPos) && isEntityTypeSolid(getEntityTileType(entityTargetPos)))):
 			return;
 		
 		# TODO: Check if entity is pushable.
@@ -133,7 +179,7 @@ func processInput():
 		match (getEntityTypeFromAtlas(entityAtlas)):
 			EntityTileType.EntityTileType_Light:
 				$Lighting.disableEmitter(targetPos);
-				$Lighting.updateLighting();
+				updateLighting();
 		
 	# Get player information.
 	var playerSource : int = $Entities.get_cell_source_id(0, playerPos);

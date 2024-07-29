@@ -51,6 +51,25 @@ class LightingInformation:
 		color = 0;
 		direction = _direction;
 
+class LightData:
+	var color : int;
+	var data : Array[LightingInformation];
+	
+	func _init():
+		data = [
+			LightingInformation.new(Direction.Direction_Up),
+			LightingInformation.new(Direction.Direction_Right),
+			LightingInformation.new(Direction.Direction_Down),
+			LightingInformation.new(Direction.Direction_Left),
+		];
+		color = 0;
+		
+	func calculateTotalColor():
+		color = 0;
+		for lightingInfo : LightingInformation in data:
+			if (lightingInfo.isInput): 
+				color |= lightingInfo.color;
+
 var lightingData : Dictionary = {};
 func updateLighting(): 
 	lightingData.clear();
@@ -73,20 +92,16 @@ func updateLighting():
 			if (checkIfSolid(pos)):
 				break;
 			
-			var lightingDataPos : Array = [
-				LightingInformation.new(Direction.Direction_Up),
-				LightingInformation.new(Direction.Direction_Right),
-				LightingInformation.new(Direction.Direction_Down),
-				LightingInformation.new(Direction.Direction_Left),
-			] if !lightingData.has(pos) else lightingData[pos];
+			var lightingDataPos : LightData = LightData.new() if !lightingData.has(pos) else lightingData[pos];
 			
-			lightingDataPos[emitter.direction].color |= color;
-			lightingDataPos[flipDirection(emitter.direction)].color |= color;
-			lightingDataPos[flipDirection(emitter.direction)].isInput = true;
+			lightingDataPos.data[emitter.direction].color |= color;
+			lightingDataPos.data[flipDirection(emitter.direction)].color |= color;
+			lightingDataPos.data[flipDirection(emitter.direction)].isInput = true;
 			
 			if (lightingData.has(pos)):
 				color = propagateLighting(pos, 0, flipDirection(emitter.direction));
 			else:
+				lightingDataPos.calculateTotalColor();
 				lightingData[pos] = lightingDataPos;
 	
 	queue_redraw();
@@ -94,11 +109,11 @@ func updateLighting():
 func propagateLighting(pos : Vector2i, color : int, fromDirection : Direction) -> int:
 	if (!lightingData.has(pos)): 
 		return 0;
-	var lightingDataPos : Array = lightingData[pos];
+	var lightingDataPos : LightData = lightingData[pos];
 	
 	if (color == 0):
 		var totalColor : int = 0;
-		for lightingInfo : LightingInformation in lightingDataPos:
+		for lightingInfo : LightingInformation in lightingDataPos.data:
 			if (lightingInfo.isInput): 
 				totalColor |= lightingInfo.color;
 		color = totalColor;
@@ -107,19 +122,19 @@ func propagateLighting(pos : Vector2i, color : int, fromDirection : Direction) -
 	
 	var totalColor : int = 0;
 	var propogateDirections : Array[Direction] = [];
-	for lightingInfo : LightingInformation in lightingDataPos:
+	for lightingInfo : LightingInformation in lightingDataPos.data:
 		if (!lightingInfo.isInput): continue;
 		totalColor |= lightingInfo.color;
 		
 		propogateDirections.push_back(flipDirection(lightingInfo.direction));
 
 	if (totalColor != color):
-		lightingDataPos[fromDirection].color = color;
+		lightingDataPos.data[fromDirection].color = color;
 		totalColor |= color;
 
 	# Propogate I guess.
 	for direction : Direction in propogateDirections:
-		var lightingInfo : LightingInformation = lightingDataPos[direction];
+		var lightingInfo : LightingInformation = lightingDataPos.data[direction];
 		if (lightingInfo.isInput || lightingInfo.color == totalColor): continue;
 			
 		
@@ -129,6 +144,8 @@ func propagateLighting(pos : Vector2i, color : int, fromDirection : Direction) -
 			Direction.Direction_Right: propagateLighting(pos + Vector2i(1, 0), totalColor, Direction.Direction_Left);
 			Direction.Direction_Down: propagateLighting(pos + Vector2i(0, 1), totalColor, Direction.Direction_Up);
 			Direction.Direction_Left: propagateLighting(pos + Vector2i(-1, 0), totalColor, Direction.Direction_Right);
+			
+	lightingDataPos.color = totalColor;
 	return totalColor;
 
 func _ready():
@@ -179,7 +196,7 @@ func _draw():
 	for pos in lightingData:
 		var midPoint : Vector2 = Vector2(pos) + Vector2(0.5, 0.5);
 		var midLighting : int = 0;
-		for lightingInfo : LightingInformation in lightingData[pos]:
+		for lightingInfo : LightingInformation in lightingData[pos].data:
 			if (!lightingInfo.color): continue;
 			
 			var sidePos : Vector2 = Vector2(pos);
