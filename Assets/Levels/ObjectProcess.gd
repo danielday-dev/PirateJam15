@@ -184,6 +184,10 @@ func processInput():
 	# Get player information.
 	var playerSource : int = $Entities.get_cell_source_id(0, playerPos);
 	var playerAtlas : Vector2i = $Entities.get_cell_atlas_coords(0, playerPos);
+	if (movement.y == -1): playerAtlas.y = 0;
+	elif (movement.x == 1): playerAtlas.y = 1;
+	elif (movement.y == 1): playerAtlas.y = 2;
+	elif (movement.x == -1): playerAtlas.y = 3;
 	
 	# Animation start.
 	$Entities.set_cell(0, playerPos);
