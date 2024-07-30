@@ -9,6 +9,8 @@ func _ready():
 	generate();
 
 func generate():
+	if (!Engine.is_editor_hint()): return;
+		
 	clear();
 	
 	var wallRect : Rect2i = $"../Walls".get_used_rect();
