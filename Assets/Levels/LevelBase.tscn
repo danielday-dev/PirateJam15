@@ -23,33 +23,41 @@ script = ExtResource("1_rok26")
 [node name="Objects" type="Node2D" parent="."]
 script = ExtResource("2_na5lr")
 animationLerp = SubResource("Curve_214x6")
+metadata/_edit_lock_ = true
 
 [node name="Floor" type="TileMap" parent="Objects"]
 tile_set = ExtResource("3_o3g7d")
 format = 2
 script = ExtResource("3_yhxxa")
+metadata/_edit_lock_ = true
 
 [node name="Walls" type="TileMap" parent="Objects"]
 tile_set = ExtResource("1_7reon")
 format = 2
+metadata/_edit_lock_ = true
 
 [node name="Lighting" type="Node2D" parent="Objects"]
 script = ExtResource("5_d8cb2")
+metadata/_edit_lock_ = true
 
 [node name="BackgroundEntities" type="TileMap" parent="Objects"]
 tile_set = ExtResource("4_l05dv")
 format = 2
+metadata/_edit_lock_ = true
 
 [node name="Animation" type="TileMap" parent="Objects"]
 tile_set = ExtResource("2_6agm3")
 format = 2
+metadata/_edit_lock_ = true
 
 [node name="Entities" type="TileMap" parent="Objects"]
 tile_set = ExtResource("2_6agm3")
 format = 2
+metadata/_edit_lock_ = true
 
 [node name="Wiring" type="Node2D" parent="Objects"]
 script = ExtResource("7_qv88h")
+metadata/_edit_lock_ = true
 
 [node name="GUI" type="Node2D" parent="."]
 
