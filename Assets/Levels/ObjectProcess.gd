@@ -31,6 +31,13 @@ func isEntityTypeSolid(entityType : EntityTileType) -> bool:
 		EntityTileType.EntityTileType_DoorClose: return true;
 	return true;
 	
+func isEntityTypeShadowable(entityType : EntityTileType) -> bool:
+	match (entityType):
+		EntityTileType.EntityTileType_None, EntityTileType.EntityTileType_Player: return false;
+		EntityTileType.EntityTileType_DoorOpen: return false;
+		EntityTileType.EntityTileType_DoorClose: return false;
+	return true;
+	
 func isEntityTypePushable(entityType : EntityTileType) -> bool:
 	match (entityType):
 		EntityTileType.EntityTileType_DoorOpen, EntityTileType.EntityTileType_DoorClose: return false;
@@ -133,10 +140,10 @@ func registerLighting():
 					var buttonCoord : Vector2i = $BackgroundEntities.get_cell_atlas_coords(0, pos);
 					
 					var color : int = buttonCoord.x + 1;
+					if (buttonCoord.y >= 2): color |= Lighting.LightingValue.Shadow;
 					
 					lightButtons.push_back(LightButton.new(pos, color));
-				
-					
+					print(pos, color, buttonCoord);
 
 func updateLighting():
 	$Lighting.updateLighting();
@@ -152,7 +159,7 @@ func updateLighting():
 		$BackgroundEntities.set_cell(
 			0, lightButton.position, 
 			$BackgroundEntities.get_cell_source_id(0, lightButton.position),
-			Vector2i(lightButton.color - 1, 1 if lightButton.lit else 0),
+			Vector2i((lightButton.color & Lighting.LightingValueColorMask) - 1, (1 if lightButton.lit else 0) + (2 if lightButton.color & Lighting.LightingValue.Shadow else 0)),
 		);
 	
 		$Wiring.setInput(lightButton.position, lightButton.lit);	
