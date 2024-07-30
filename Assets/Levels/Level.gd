@@ -8,3 +8,6 @@ func _ready():
 	var zoomRaw = Vector2(get_viewport_rect().size) / (size - (tileSize * 2.0));
 	var zoom = min(zoomRaw.x, zoomRaw.y);
 	$Camera.zoom = Vector2(zoom, zoom); 
+
+func gotoLevelSelect():
+	get_tree().change_scene_to_file("res://Scenes/LevelSelect.tscn");

@@ -42,3 +42,25 @@ format = 2
 
 [node name="Wiring" type="Node2D" parent="Objects"]
 script = ExtResource("7_qv88h")
+
+[node name="Level Select Button" type="Button" parent="."]
+offset_right = 72.0
+offset_bottom = 36.0
+text = "Back"
+
+[node name="Undo Button" type="Button" parent="."]
+offset_top = 72.0
+offset_right = 72.0
+offset_bottom = 108.0
+text = "◀"
+
+[node name="Restart Button" type="Button" parent="."]
+offset_top = 144.0
+offset_right = 72.0
+offset_bottom = 180.0
+text = "◀◀
+"
+
+[connection signal="button_up" from="Level Select Button" to="." method="gotoLevelSelect"]
+[connection signal="button_up" from="Undo Button" to="Objects" method="statePop"]
+[connection signal="button_up" from="Restart Button" to="Objects" method="stateUnwind"]
