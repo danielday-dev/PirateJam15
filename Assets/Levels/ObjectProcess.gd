@@ -207,6 +207,16 @@ func _process(delta):
 
 var inputMovementLastPrioritizedY : bool = false;
 func processInput():
+	# Undo button.
+	if (Input.is_action_just_pressed("player_undo")):
+		statePop();
+		return;
+	
+	# Restart button.
+	if (Input.is_action_just_pressed("player_restart")):
+		stateUnwind();
+		return;
+	
 	var movement : Vector2i = Vector2i(
 		Input.get_axis("player_movement_left", "player_movement_right"),
 		Input.get_axis("player_movement_up", "player_movement_down"),
@@ -293,10 +303,13 @@ func processAnimation(delta):
 	animationProcessing = false;
 	var animationRect : Rect2i = $Animation.get_used_rect();
 	
+	var affectedCellPositions : Array[Vector2i] = [];
+	
 	# Copy animation tilemap to entities.
 	for x in range(animationRect.size.x):
 		for y in range(animationRect.size.y):
 			var pos : Vector2i = animationRect.position + Vector2i(x, y);
+			affectedCellPositions.push_back(pos);
 			if ($Animation.get_cell_source_id(0, pos) != -1):
 				var atlas : Vector2i = $Animation.get_cell_atlas_coords(0, pos);
 				$Entities.set_cell(
@@ -308,3 +321,100 @@ func processAnimation(delta):
 				onEntityMove(entityType, pos, pos + animationTileTargetOffset);
 	# Clear animation tilemap.
 	$Animation.clear();
+	
+	stateAddMovement(animationTileTargetOffset, affectedCellPositions);
+
+
+# Honestly, should've thought about this earlier. 
+# So here it is,, in the big ol' main file.
+
+var states : Array[Array] = [[]]
+var activeState : Array[Dictionary] = []
+
+enum StateType {
+	StateType_Movement,
+	StateType_Wiring,
+};
+
+func stateGotoNext():
+	states.push_back(activeState);
+	activeState = [];
+
+var stateTracking : bool = true;
+func statePop():
+	if (states.size() <= 0): return;
+	
+	activeState.append_array(states.pop_back());
+	
+	stateTracking = false;
+	for state : Dictionary in activeState:
+		match (state["type"]):
+			StateType.StateType_Movement:
+				var movement : Vector2i = state["movement"];
+				for affected : Vector2i in state["affectedTiles"]:
+					var targetPos : Vector2i = affected + movement;
+					var atlasPos : Vector2i = $Entities.get_cell_atlas_coords(0, targetPos);
+					if (getEntityTypeFromAtlas(atlasPos) == EntityTileType.EntityTileType_Player):
+						if (movement.y == -1): atlasPos.y = 0;
+						elif (movement.x == 1): atlasPos.y = 1;
+						elif (movement.y == 1): atlasPos.y = 2;
+						elif (movement.x == -1): atlasPos.y = 3;
+					
+					$Animation.set_cell(
+						0, affected, 
+						$Entities.get_cell_source_id(0, targetPos),
+						atlasPos
+					);
+					$Entities.set_cell(0, targetPos)
+					
+				var animationRect : Rect2i = $Animation.get_used_rect();
+				for x in range(animationRect.size.x):
+					for y in range(animationRect.size.y):
+						var pos : Vector2i = animationRect.position + Vector2i(x, y);
+						if ($Animation.get_cell_source_id(0, pos) != -1):
+							var atlas : Vector2i = $Animation.get_cell_atlas_coords(0, pos);
+							$Entities.set_cell(
+								0, pos, 
+								$Animation.get_cell_source_id(0, pos), 
+								atlas
+							);
+							var entityType : EntityTileType = getEntityTypeFromAtlas(atlas);
+							onEntityMove(entityType, pos + state["movement"], pos);
+				$Animation.clear();
+				
+			StateType.StateType_Wiring:
+				$Wiring.setInput(state["pos"], !state["state"]);
+
+	activeState = [];
+
+	# Just to make sure everything has settled.
+	for i : int in range(5):
+		updateLighting();
+	
+	stateTracking = true;
+
+func stateUnwind():
+	# This is cursed and i think its hilarious
+	while (!states.is_empty()): 
+		statePop();
+
+func stateAddMovement(movement : Vector2i, affectedTiles : Array[Vector2i]):
+	if (!stateTracking): return;
+	
+	activeState.push_back({
+		"type": StateType.StateType_Movement,
+		"movement": movement,
+		"affectedTiles": affectedTiles
+	});
+	stateGotoNext();
+	
+func stateAddWiring(pos : Vector2i, state : bool):
+	if (!stateTracking): return;
+	
+	activeState.push_back({
+		"type": StateType.StateType_Wiring,
+		"pos": pos,
+		"state": state,
+	});
+
+

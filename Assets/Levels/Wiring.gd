@@ -63,6 +63,7 @@ func setInput(pos : Vector2i, state : bool) -> void:
 	if (!inputCells.has(pos)): return;
 	inputCells[pos].setState(state, outputCells);
 	queue_redraw();
+	get_parent().stateAddWiring(pos, state);
 
 func getOuput(pos : Vector2i) -> bool:
 	if (!outputCells.has(pos)): return false;
