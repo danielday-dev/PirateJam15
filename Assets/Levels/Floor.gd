@@ -5,9 +5,6 @@ extends TileMap
 	set(value):
 		generate();
 
-func _ready():
-	generate();
-
 func generate():
 	if (!Engine.is_editor_hint()): return;
 		
