@@ -110,28 +110,37 @@ func updateLighting():
 			
 			if (checkIfSolid(pos)):
 				if (checkIfShadowable(pos)):
-					var arr : Array[Direction] = [];
+					var arr : Array[Dictionary] = [];
 					if (endPoints.has(pos)): arr = endPoints[pos];
 					else: endPoints[pos] = arr;
 					
-					arr.push_back(emitter.direction);
+					arr.push_back({
+						"direction": emitter.direction,
+						"color": color,
+					});
 				break;
 			
 			var lightingDataPos : LightData = LightData.new() if !lightingData.has(pos) else lightingData[pos];
 			
+		
 			lightingDataPos.data[emitter.direction].color |= color;
 			lightingDataPos.data[flipDirection(emitter.direction)].color |= color;
 			lightingDataPos.data[flipDirection(emitter.direction)].isInput = true;
 			
 			if (lightingData.has(pos)):
 				color = propagateLighting(pos, flipDirection(emitter.direction));
+				lightingDataPos.data[emitter.direction].color |= color;
+				lightingDataPos.calculateTotalColor();
 			else:
 				lightingDataPos.calculateTotalColor();
 				lightingData[pos] = lightingDataPos;
 	
 	# Handle shadows.
 	for endPos : Vector2i in endPoints:
-		for direction : Direction in endPoints[endPos]:
+		for endInfo : Dictionary in endPoints[endPos]:
+			var direction : Direction = endInfo["direction"];
+			var color : int = endInfo["color"] | LightingValue.Shadow;
+			
 			var pos : Vector2i = endPos;
 			var originPos : Vector2i = endPos;
 			match (direction):
@@ -140,8 +149,8 @@ func updateLighting():
 				Direction.Direction_Down: originPos.y -= 1;
 				Direction.Direction_Left: originPos.x += 1;
 			
-			if (!lightingData.has(originPos)): continue;
-			var color : int = lightingData[originPos].color | LightingValue.Shadow;
+			if (lightingData.has(originPos)):
+				color = lightingData[originPos].color | LightingValue.Shadow;
 			
 			var maxLength : int = 100;
 			while (maxLength > 0):
@@ -158,7 +167,7 @@ func updateLighting():
 	
 				if (lightingData.has(pos)):
 					var lightingDataPos : LightData = lightingData[pos];
-					if (lightingDataPos.data[flipDirection(direction)].color): break;
+					if (lightingDataPos.data[flipDirection(direction)].color && lightingDataPos.data[flipDirection(direction)].isInput): break;
 					
 					lightingDataPos.data[flipDirection(direction)].color |= color;
 					lightingDataPos.data[flipDirection(direction)].isInput = true;
