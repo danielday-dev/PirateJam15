@@ -49,7 +49,7 @@ func getEntityTypeFromAtlas(atlas : Vector2i) -> EntityTileType:
 		0: return EntityTileType.EntityTileType_Player;
 		1: return EntityTileType.EntityTileType_Box;
 		2, 3, 4, 5, 6, 7, 8: return EntityTileType.EntityTileType_Light;
-		9, 10, 11, 12, 13, 14, 15: return EntityTileType.EntityTileType_DoorClose if atlas.y == 0 else EntityTileType.EntityTileType_DoorOpen;
+		9, 10, 11, 12, 13, 14, 15: return EntityTileType.EntityTileType_DoorClose;
 		
 	return EntityTileType.EntityTileType_None;
 	
@@ -150,7 +150,6 @@ func registerLighting():
 					if (buttonCoord.y >= 2): color |= Lighting.LightingValue.Shadow;
 					
 					lightButtons.push_back(LightButton.new(pos, color));
-					print(pos, color, buttonCoord);
 
 func updateLighting():
 	$Lighting.updateLighting();

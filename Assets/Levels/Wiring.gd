@@ -62,6 +62,7 @@ func _ready():
 func setInput(pos : Vector2i, state : bool) -> void:
 	if (!inputCells.has(pos)): return;
 	inputCells[pos].setState(state, outputCells);
+	queue_redraw();
 
 func getOuput(pos : Vector2i) -> bool:
 	if (!outputCells.has(pos)): return false;
@@ -82,3 +83,8 @@ func _draw():
 		draw_circle(start, 8, lerp(connection.color, Color.WHITE, 0.4));
 		draw_circle(end, 9, Color(0.0, 1.0, 0.0, 0.4));
 		draw_circle(end, 8, lerp(connection.color, Color.BLACK, 0.4));
+		
+		if (outputCells.has(connection.end)):
+			var default_font = ThemeDB.fallback_font;
+			var default_font_size = ThemeDB.fallback_font_size;
+			draw_string(default_font, end, str(outputCells[connection.end].remainingInputs), HORIZONTAL_ALIGNMENT_CENTER, -1, default_font_size)
