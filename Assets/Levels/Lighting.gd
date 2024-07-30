@@ -167,7 +167,10 @@ func updateLighting():
 	
 				if (lightingData.has(pos)):
 					var lightingDataPos : LightData = lightingData[pos];
-					if (lightingDataPos.data[flipDirection(direction)].color && lightingDataPos.data[flipDirection(direction)].isInput): break;
+					if (lightingDataPos.data[flipDirection(direction)].color): 
+						if (lightingDataPos.data[flipDirection(direction)].isInput || \
+							!(lightingDataPos.data[flipDirection(direction)].color & LightingValue.Shadow)):
+							break;
 					
 					lightingDataPos.data[flipDirection(direction)].color |= color;
 					lightingDataPos.data[flipDirection(direction)].isInput = true;
