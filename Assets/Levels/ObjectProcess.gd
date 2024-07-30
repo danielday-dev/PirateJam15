@@ -233,6 +233,7 @@ func processInput():
 		if (inputMovementLastPrioritizedY): movement.y = 0;
 		else: movement.x = 0;
 		
+	
 	var playerPos : Vector2i;
 	match (getPlayerPos()):
 		[ false, _ ]: 
@@ -240,6 +241,14 @@ func processInput():
 			return;
 		[ true, var playerPosUntyped]:
 			playerPos = playerPosUntyped;
+	
+	# Get player information.
+	var playerSource : int = $Entities.get_cell_source_id(0, playerPos);
+	var playerAtlas : Vector2i = $Entities.get_cell_atlas_coords(0, playerPos);
+	if (movement.y == -1): playerAtlas.y = 0;
+	elif (movement.x == 1): playerAtlas.y = 1;
+	elif (movement.y == 1): playerAtlas.y = 2;
+	elif (movement.x == -1): playerAtlas.y = 3;
 	
 	# Check for wall.
 	var targetPos : Vector2i = playerPos + movement;
@@ -255,8 +264,6 @@ func processInput():
 		if (checkIfWall(entityTargetPos) || (checkIfEntity(entityTargetPos) && isEntityTypeSolid(getEntityTileType(entityTargetPos)))):
 			return;
 		
-		# TODO: Check if entity is pushable.
-
 		# Set animation data.
 		var entitySource : int = $Entities.get_cell_source_id(0, targetPos);
 		var entityAtlas : Vector2i = $Entities.get_cell_atlas_coords(0, targetPos);
@@ -266,15 +273,9 @@ func processInput():
 		match (getEntityTypeFromAtlas(entityAtlas)):
 			EntityTileType.EntityTileType_Light:
 				$Lighting.disableEmitter(targetPos);
-				updateLighting();
-		
-	# Get player information.
-	var playerSource : int = $Entities.get_cell_source_id(0, playerPos);
-	var playerAtlas : Vector2i = $Entities.get_cell_atlas_coords(0, playerPos);
-	if (movement.y == -1): playerAtlas.y = 0;
-	elif (movement.x == 1): playerAtlas.y = 1;
-	elif (movement.y == 1): playerAtlas.y = 2;
-	elif (movement.x == -1): playerAtlas.y = 3;
+				
+				if (!(entityAtlas.y == playerAtlas.y || entityAtlas.y == ((playerAtlas.y + 2) % 4))):
+					updateLighting();
 	
 	# Animation start.
 	$Entities.set_cell(0, playerPos);
