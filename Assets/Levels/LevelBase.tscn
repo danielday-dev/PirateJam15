@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://ceox7v6p25unb"]
+[gd_scene load_steps=12 format=3 uid="uid://ceox7v6p25unb"]
 
 [ext_resource type="TileSet" uid="uid://c1tgrgs3ys4wn" path="res://Assets/Levels/Tilesets/Walls.tres" id="1_7reon"]
 [ext_resource type="Script" path="res://Assets/Levels/Level.gd" id="1_rok26"]
@@ -9,6 +9,7 @@
 [ext_resource type="TileSet" uid="uid://bwvt7r64dbdjs" path="res://Assets/Levels/Tilesets/BackgroundEntities.tres" id="4_l05dv"]
 [ext_resource type="Script" path="res://Assets/Levels/Lighting.gd" id="5_d8cb2"]
 [ext_resource type="Script" path="res://Assets/Levels/Wiring.gd" id="7_qv88h"]
+[ext_resource type="Theme" uid="uid://cuj4xxk1q18g6" path="res://Assets/GUI/MainTheme.tres" id="10_ychug"]
 
 [sub_resource type="Curve" id="Curve_214x6"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.554585, 0.241758), 0.0, 0.0, 0, 0, Vector2(1, 1), 5.17277, 0.0, 0, 0]
@@ -27,7 +28,6 @@ animationLerp = SubResource("Curve_214x6")
 tile_set = ExtResource("3_o3g7d")
 format = 2
 script = ExtResource("3_yhxxa")
-generateFloor = null
 
 [node name="Walls" type="TileMap" parent="Objects"]
 tile_set = ExtResource("1_7reon")
@@ -51,24 +51,33 @@ format = 2
 [node name="Wiring" type="Node2D" parent="Objects"]
 script = ExtResource("7_qv88h")
 
-[node name="Level Select Button" type="Button" parent="."]
+[node name="GUI" type="Node2D" parent="."]
+
+[node name="Level Select Button" type="Button" parent="GUI"]
 offset_right = 72.0
 offset_bottom = 36.0
-text = "Back"
+focus_mode = 0
+theme = ExtResource("10_ychug")
+text = "Levels"
 
-[node name="Undo Button" type="Button" parent="."]
-offset_top = 72.0
+[node name="Undo Button" type="Button" parent="GUI"]
+offset_top = 48.0
 offset_right = 72.0
-offset_bottom = 108.0
-text = "◀"
-
-[node name="Restart Button" type="Button" parent="."]
-offset_top = 144.0
-offset_right = 72.0
-offset_bottom = 180.0
-text = "◀◀
+offset_bottom = 84.0
+focus_mode = 0
+theme = ExtResource("10_ychug")
+text = "Undo
 "
 
-[connection signal="button_up" from="Level Select Button" to="." method="gotoLevelSelect"]
-[connection signal="button_up" from="Undo Button" to="Objects" method="statePop"]
-[connection signal="button_up" from="Restart Button" to="Objects" method="stateUnwind"]
+[node name="Restart Button" type="Button" parent="GUI"]
+offset_top = 96.0
+offset_right = 72.0
+offset_bottom = 132.0
+focus_mode = 0
+theme = ExtResource("10_ychug")
+text = "Restart
+"
+
+[connection signal="button_up" from="GUI/Level Select Button" to="." method="gotoLevelSelect"]
+[connection signal="button_up" from="GUI/Undo Button" to="Objects" method="statePop"]
+[connection signal="button_up" from="GUI/Restart Button" to="Objects" method="stateUnwind"]

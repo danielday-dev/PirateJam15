@@ -1,5 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://dc1f2ce4tmjiu"]
+[gd_scene load_steps=4 format=3 uid="uid://dc1f2ce4tmjiu"]
 
+[ext_resource type="Theme" uid="uid://cuj4xxk1q18g6" path="res://Assets/GUI/MainTheme.tres" id="1_6v3vl"]
 [ext_resource type="PackedScene" uid="uid://8bn5wiq2ayda" path="res://Assets/LevelSelect/LevelGoto.tscn" id="1_ar7pr"]
 [ext_resource type="Script" path="res://Assets/LevelSelect/LevelSelect.gd" id="1_re3p7"]
 
@@ -8,6 +9,7 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 640.0
 offset_bottom = 360.0
+theme = ExtResource("1_6v3vl")
 script = ExtResource("1_re3p7")
 levelGoto = ExtResource("1_ar7pr")
 
