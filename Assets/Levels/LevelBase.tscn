@@ -1,9 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://ceox7v6p25unb"]
+[gd_scene load_steps=11 format=3 uid="uid://ceox7v6p25unb"]
 
 [ext_resource type="TileSet" uid="uid://c1tgrgs3ys4wn" path="res://Assets/Levels/Tilesets/Walls.tres" id="1_7reon"]
 [ext_resource type="Script" path="res://Assets/Levels/Level.gd" id="1_rok26"]
 [ext_resource type="TileSet" uid="uid://bk1b8h00etn7q" path="res://Assets/Levels/Tilesets/Entities.tres" id="2_6agm3"]
 [ext_resource type="Script" path="res://Assets/Levels/ObjectProcess.gd" id="2_na5lr"]
+[ext_resource type="TileSet" uid="uid://d3g8l3h5hish0" path="res://Assets/Levels/Tilesets/Floor.tres" id="3_o3g7d"]
+[ext_resource type="Script" path="res://Assets/Levels/Floor.gd" id="3_yhxxa"]
 [ext_resource type="TileSet" uid="uid://bwvt7r64dbdjs" path="res://Assets/Levels/Tilesets/BackgroundEntities.tres" id="4_l05dv"]
 [ext_resource type="Script" path="res://Assets/Levels/Lighting.gd" id="5_d8cb2"]
 [ext_resource type="Script" path="res://Assets/Levels/Wiring.gd" id="7_qv88h"]
@@ -21,6 +23,16 @@ script = ExtResource("1_rok26")
 script = ExtResource("2_na5lr")
 animationLerp = SubResource("Curve_214x6")
 
+[node name="Floor" type="TileMap" parent="Objects"]
+tile_set = ExtResource("3_o3g7d")
+format = 2
+script = ExtResource("3_yhxxa")
+generateFloor = null
+
+[node name="Walls" type="TileMap" parent="Objects"]
+tile_set = ExtResource("1_7reon")
+format = 2
+
 [node name="Lighting" type="Node2D" parent="Objects"]
 script = ExtResource("5_d8cb2")
 
@@ -34,10 +46,6 @@ format = 2
 
 [node name="Entities" type="TileMap" parent="Objects"]
 tile_set = ExtResource("2_6agm3")
-format = 2
-
-[node name="Walls" type="TileMap" parent="Objects"]
-tile_set = ExtResource("1_7reon")
 format = 2
 
 [node name="Wiring" type="Node2D" parent="Objects"]
