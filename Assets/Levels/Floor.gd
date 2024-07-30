@@ -3,11 +3,12 @@ extends TileMap
 
 @export var generateFloor : bool = false:
 	set(value):
-		generate();
-
+		if (value):
+			generate();
+		
 func generate():
 	if (!Engine.is_editor_hint()): return;
-		
+	
 	clear();
 	
 	var wallRect : Rect2i = $"../Walls".get_used_rect();
