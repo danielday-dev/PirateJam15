@@ -124,7 +124,7 @@ func updateLighting():
 			lightingDataPos.data[flipDirection(emitter.direction)].isInput = true;
 			
 			if (lightingData.has(pos)):
-				color = propagateLighting(pos, 0, flipDirection(emitter.direction));
+				color = propagateLighting(pos, flipDirection(emitter.direction));
 			else:
 				lightingDataPos.calculateTotalColor();
 				lightingData[pos] = lightingDataPos;
@@ -162,14 +162,13 @@ func updateLighting():
 					
 					lightingDataPos.data[flipDirection(direction)].color |= color;
 					lightingDataPos.data[flipDirection(direction)].isInput = true;
-					lightingDataPos.calculateTotalColor();
 					
-					if (lightingDataPos.color & LightingValue.Shadow):
-						lightingDataPos.data[direction].color |= color;
-						color = propagateLighting(pos, 0, flipDirection(direction));
-						pass;
-					else:
-						break;
+					# Don't propagate into lighting.
+					if (!(lightingDataPos.color & LightingValue.Shadow)): break;
+					
+					# Propagate shadows.
+					lightingDataPos.data[direction].color |= color;
+					color = propagateLighting(pos, flipDirection(direction));
 				else:
 					var lightingDataPos : LightData = LightData.new();
 					lightingDataPos.data[direction].color |= color;
@@ -180,44 +179,41 @@ func updateLighting():
 	
 	queue_redraw();
 
-func propagateLighting(pos : Vector2i, color : int, fromDirection : Direction) -> int:
-	if (!lightingData.has(pos)): 
-		return 0;
+func propagateLighting(pos : Vector2i, fromDirection : Direction) -> int:
+	# Get lighting point data.
+	if (!lightingData.has(pos)): return 0;
 	var lightingDataPos : LightData = lightingData[pos];
 	
+	# Make sure color is calculated.
+	var previousColor : int = lightingDataPos.color;
 	lightingDataPos.calculateTotalColor();
-	if (color == 0):
-		color = lightingDataPos.color;
-	if (color == 0): return 0;
+	var color : int = lightingDataPos.color;
 	
-	var propogateDirections : Array[Direction] = [];
-	for lightingInfo : LightingInformation in lightingDataPos.data:
-		if (!lightingInfo.isInput): continue;
-		propogateDirections.push_back(flipDirection(lightingInfo.direction));
-
-	var totalColor = lightingDataPos.color;
-	if (totalColor != color):
-		if (totalColor & LightingValueShadowMask != color & LightingValueShadowMask): return totalColor;
+	if (color == previousColor): return color;
+	
+	# Find propagation targets.
+	var propagationDirections : Array[Direction] = [ ];
+	for lightInfo : LightingInformation in lightingDataPos.data:
+		if (lightInfo.isInput):
+			propagationDirections.push_back(flipDirection(lightInfo.direction));
+	
+	# Propagate.
+	for direction : Direction in propagationDirections:
+		lightingDataPos.data[direction].color = color;
 		
-		lightingDataPos.data[fromDirection].color = color;
-		totalColor |= color;
-
-	# Propogate I guess.
-	for direction : Direction in propogateDirections:
-		var lightingInfo : LightingInformation = lightingDataPos.data[direction];
-		if (lightingInfo.isInput || lightingInfo.color == totalColor): continue;
-			
+		var targetPos : Vector2i = pos;
+		match (direction):
+			Direction.Direction_Up: targetPos.y -= 1;
+			Direction.Direction_Right: targetPos.x += 1;
+			Direction.Direction_Down: targetPos.y += 1;
+			Direction.Direction_Left: targetPos.x -= 1;
 		
-		lightingInfo.color = totalColor;
-		match (lightingInfo.direction):
-			Direction.Direction_Up: propagateLighting(pos + Vector2i(0, -1), totalColor, Direction.Direction_Down);
-			Direction.Direction_Right: propagateLighting(pos + Vector2i(1, 0), totalColor, Direction.Direction_Left);
-			Direction.Direction_Down: propagateLighting(pos + Vector2i(0, 1), totalColor, Direction.Direction_Up);
-			Direction.Direction_Left: propagateLighting(pos + Vector2i(-1, 0), totalColor, Direction.Direction_Right);
-			
+		if (lightingData.has(targetPos)):
+			var lightingDataTargetPos : LightData = lightingData[targetPos];
+			lightingDataTargetPos.data[flipDirection(direction)].color = color;
+			propagateLighting(targetPos, flipDirection(direction));
 		
-	lightingDataPos.calculateTotalColor();
-	return lightingDataPos.color;
+	return color;
 
 func _ready():
 	updateLighting();
