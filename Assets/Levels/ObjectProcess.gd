@@ -199,6 +199,9 @@ func _ready():
 	registerLighting();
 	updateLighting();
 	
+	# Ignore setup states.
+	activeState.clear();
+	
 func _process(delta):
 	if (animationProcessing): 
 		processAnimation(delta);
