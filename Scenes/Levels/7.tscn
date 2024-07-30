@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://chrud0n1wd7dl"]
+[gd_scene load_steps=15 format=3 uid="uid://bnpq378c7qu73"]
 
 [ext_resource type="PackedScene" uid="uid://ceox7v6p25unb" path="res://Assets/Levels/LevelBase.tscn" id="1_1wrni"]
 [ext_resource type="Script" path="res://Assets/Levels/WireConnection.gd" id="2_xjf1n"]
@@ -91,3 +91,6 @@ layer_0/tile_data = PackedInt32Array(3, 131072, 1, 65539, 131072, 1, 131075, 131
 
 [node name="Wiring" parent="Objects" index="6"]
 connections = Array[ExtResource("2_xjf1n")]([SubResource("Resource_4u3mc"), SubResource("Resource_xve5w"), SubResource("Resource_clgja"), SubResource("Resource_p8rg8"), SubResource("Resource_um8wj"), SubResource("Resource_ns36b"), SubResource("Resource_gy5j4"), SubResource("Resource_02aoh"), SubResource("Resource_ykxu3"), SubResource("Resource_wel8x"), SubResource("Resource_1mjw4"), SubResource("Resource_rsmpr")])
+
+[node name="GUI" parent="." index="2"]
+position = Vector2(12, 60)
