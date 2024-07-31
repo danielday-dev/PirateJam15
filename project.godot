@@ -11,8 +11,10 @@ config_version=5
 [application]
 
 config/name="PirateJam15"
-run/main_scene="res://Scenes/LevelSelect.tscn"
+run/main_scene="res://Scenes/Splashscreen.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
+boot_splash/bg_color=Color(0.133333, 0.113725, 0.239216, 1)
+boot_splash/show_image=false
 
 [display]
 
