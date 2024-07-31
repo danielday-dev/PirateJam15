@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dc1f2ce4tmjiu"]
+[gd_scene load_steps=5 format=3 uid="uid://dc1f2ce4tmjiu"]
 
 [ext_resource type="Theme" uid="uid://cuj4xxk1q18g6" path="res://Assets/GUI/MainTheme.tres" id="1_6v3vl"]
 [ext_resource type="PackedScene" uid="uid://8bn5wiq2ayda" path="res://Assets/LevelSelect/LevelGoto.tscn" id="1_ar7pr"]
 [ext_resource type="Script" path="res://Assets/LevelSelect/LevelSelect.gd" id="1_re3p7"]
+[ext_resource type="Material" uid="uid://b86ugiwyyg5jt" path="res://Assets/Background/Background.tres" id="4_1vpcj"]
 
 [node name="LevelSelector" type="Control"]
 layout_mode = 3
@@ -13,7 +14,17 @@ theme = ExtResource("1_6v3vl")
 script = ExtResource("1_re3p7")
 levelGoto = ExtResource("1_ar7pr")
 
-[node name="HBox" type="HBoxContainer" parent="."]
+[node name="Background" type="ColorRect" parent="."]
+material = ExtResource("4_1vpcj")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="VBox" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,10 +33,27 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="VBox" type="VBoxContainer" parent="HBox"]
+[node name="MarginContainer" type="MarginContainer" parent="VBox"]
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
-alignment = 1
 
-[node name="Grid" type="GridContainer" parent="HBox/VBox"]
+[node name="Panel" type="PanelContainer" parent="VBox/MarginContainer"]
+custom_minimum_size = Vector2(400, 40)
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+size_flags_stretch_ratio = 0.0
+
+[node name="Label" type="Label" parent="VBox/MarginContainer/Panel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 60
+text = "Shader Laser House Invader"
+horizontal_alignment = 1
+vertical_alignment = 1
+text_overrun_behavior = 4
+
+[node name="Grid" type="GridContainer" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
 columns = 4

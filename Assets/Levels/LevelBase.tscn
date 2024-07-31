@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://ceox7v6p25unb"]
+[gd_scene load_steps=13 format=3 uid="uid://ceox7v6p25unb"]
 
 [ext_resource type="TileSet" uid="uid://c1tgrgs3ys4wn" path="res://Assets/Levels/Tilesets/Walls.tres" id="1_7reon"]
 [ext_resource type="Script" path="res://Assets/Levels/Level.gd" id="1_rok26"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://Assets/Levels/Floor.gd" id="3_yhxxa"]
 [ext_resource type="TileSet" uid="uid://bwvt7r64dbdjs" path="res://Assets/Levels/Tilesets/BackgroundEntities.tres" id="4_l05dv"]
 [ext_resource type="Script" path="res://Assets/Levels/Lighting.gd" id="5_d8cb2"]
+[ext_resource type="Material" uid="uid://b86ugiwyyg5jt" path="res://Assets/Background/Background.tres" id="5_vi568"]
 [ext_resource type="Script" path="res://Assets/Levels/Wiring.gd" id="7_qv88h"]
 [ext_resource type="Theme" uid="uid://cuj4xxk1q18g6" path="res://Assets/GUI/MainTheme.tres" id="10_ychug"]
 
@@ -32,6 +33,7 @@ script = ExtResource("3_yhxxa")
 metadata/_edit_lock_ = true
 
 [node name="Walls" type="TileMap" parent="Objects"]
+material = ExtResource("5_vi568")
 tile_set = ExtResource("1_7reon")
 format = 2
 metadata/_edit_lock_ = true

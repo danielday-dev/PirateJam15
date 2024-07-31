@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=7 format=3 uid="uid://cuj4xxk1q18g6"]
+[gd_resource type="Theme" load_steps=8 format=3 uid="uid://cuj4xxk1q18g6"]
 
 [ext_resource type="FontFile" uid="uid://dq65uq3gojaq4" path="res://Assets/GUI/MakiBold.ttf" id="1_6qb1p"]
 
@@ -89,6 +89,20 @@ corner_radius_bottom_left = 8
 corner_detail = 5
 anti_aliasing = false
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nw41g"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.133333, 0.113725, 0.239216, 1)
+border_width_bottom = 2
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+corner_detail = 5
+anti_aliasing = false
+
 [resource]
 default_font = ExtResource("1_6qb1p")
 default_font_size = 40
@@ -113,3 +127,4 @@ Button/styles/focus = SubResource("StyleBoxFlat_nkhlm")
 Button/styles/hover = SubResource("StyleBoxFlat_os538")
 Button/styles/normal = SubResource("StyleBoxFlat_4fqbk")
 Button/styles/pressed = SubResource("StyleBoxFlat_adw6e")
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_nw41g")

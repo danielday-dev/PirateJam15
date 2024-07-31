@@ -45,4 +45,4 @@ func _ready():
 	for i in range(min(levelPaths.size(), levelNames.size())):
 		var instance : Control = levelGoto.instantiate();
 		instance.setLevel(levelNames[i], levelPaths[i]);
-		$HBox/VBox/Grid.add_child(instance);
+		$VBox/Grid.add_child(instance);

@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://b86ugiwyyg5jt"]
+
+[ext_resource type="Shader" path="res://Assets/Background/Background.gdshader" id="1_5w6rt"]
+[ext_resource type="Texture2D" uid="uid://chlqvytcrmyqd" path="res://Assets/Background/Background.png" id="2_8a5tc"]
+
+[resource]
+shader = ExtResource("1_5w6rt")
+shader_parameter/backgroundImageRatio = 0.422
+shader_parameter/backgroundImage = ExtResource("2_8a5tc")
