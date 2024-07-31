@@ -15,6 +15,8 @@ func onGotoLevel():
 	var instance : Node2D = scene.instantiate();
 	instance.name = self.text;
 	get_tree().root.add_child(instance);
+	LeaderBoard.levelName = self.text;
+	get_tree().root.get_child(1).get_child(2).get_child(1).release_focus();
 
 func showArtefact():
 	$Artefact.visible = true;

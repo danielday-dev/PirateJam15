@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://ceox7v6p25unb"]
+[gd_scene load_steps=18 format=3 uid="uid://ceox7v6p25unb"]
 
 [ext_resource type="TileSet" uid="uid://c1tgrgs3ys4wn" path="res://Assets/Levels/Tilesets/Walls.tres" id="1_7reon"]
 [ext_resource type="Script" path="res://Assets/Levels/Level.gd" id="1_rok26"]
@@ -11,10 +11,11 @@
 [ext_resource type="Material" uid="uid://b86ugiwyyg5jt" path="res://Assets/Background/Background.tres" id="5_vi568"]
 [ext_resource type="Script" path="res://Assets/Levels/Wiring.gd" id="7_qv88h"]
 [ext_resource type="Theme" uid="uid://cuj4xxk1q18g6" path="res://Assets/GUI/MainTheme.tres" id="10_ychug"]
-[ext_resource type="Script" path="res://Scenes/Levels/LevelComplete.gd" id="12_olgnu"]
+[ext_resource type="Script" path="res://Assets/Levels/LevelComplete.gd" id="12_olgnu"]
 [ext_resource type="Material" uid="uid://crxfalfjr0jag" path="res://Assets/GUI/MenuBlurLight.tres" id="13_34gyf"]
 [ext_resource type="Texture2D" uid="uid://b7p5su588l7yl" path="res://Assets/Artefacts/0.png" id="13_jbymt"]
 [ext_resource type="Material" uid="uid://uqnhojnx3uma" path="res://Assets/GUI/MenuBlur.tres" id="13_nh5o4"]
+[ext_resource type="Script" path="res://Assets/Levels/LeaderBoard.gd" id="16_med0f"]
 
 [sub_resource type="Curve" id="Curve_214x6"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.554585, 0.241758), 0.0, 0.0, 0, 0, Vector2(1, 1), 5.17277, 0.0, 0, 0]
@@ -124,17 +125,21 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("10_ychug")
 
-[node name="Panel" type="PanelContainer" parent="Level Complete/Margin"]
+[node name="HBox" type="HBoxContainer" parent="Level Complete/Margin"]
+layout_mode = 2
+alignment = 1
+
+[node name="Panel" type="PanelContainer" parent="Level Complete/Margin/HBox"]
 material = ExtResource("13_nh5o4")
 custom_minimum_size = Vector2(300, 290)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="VBox" type="VBoxContainer" parent="Level Complete/Margin/Panel"]
+[node name="VBox" type="VBoxContainer" parent="Level Complete/Margin/HBox/Panel"]
 layout_mode = 2
 
-[node name="Artefact" type="TextureRect" parent="Level Complete/Margin/Panel/VBox"]
+[node name="Artefact" type="TextureRect" parent="Level Complete/Margin/HBox/Panel/VBox"]
 custom_minimum_size = Vector2(160, 160)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -142,23 +147,23 @@ size_flags_vertical = 4
 texture = ExtResource("13_jbymt")
 stretch_mode = 5
 
-[node name="VBox" type="VBoxContainer" parent="Level Complete/Margin/Panel/VBox"]
+[node name="VBox" type="VBoxContainer" parent="Level Complete/Margin/HBox/Panel/VBox"]
 layout_mode = 2
 
-[node name="Artefact" type="Label" parent="Level Complete/Margin/Panel/VBox/VBox"]
+[node name="Artefact" type="Label" parent="Level Complete/Margin/HBox/Panel/VBox/VBox"]
 layout_mode = 2
 text = "Artefact"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Background" type="ColorRect" parent="Level Complete/Margin/Panel/VBox/VBox"]
+[node name="Background" type="ColorRect" parent="Level Complete/Margin/HBox/Panel/VBox/VBox"]
 custom_minimum_size = Vector2(240, 35)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 color = Color(0, 0, 0, 1)
 
-[node name="ArtefactName" type="Label" parent="Level Complete/Margin/Panel/VBox/VBox/Background"]
+[node name="ArtefactName" type="Label" parent="Level Complete/Margin/HBox/Panel/VBox/VBox/Background"]
 custom_minimum_size = Vector2(200, 12)
 layout_mode = 1
 anchors_preset = 15
@@ -171,20 +176,146 @@ text = "- ??? -"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Found" type="Label" parent="Level Complete/Margin/Panel/VBox/VBox"]
+[node name="Found" type="Label" parent="Level Complete/Margin/HBox/Panel/VBox/VBox"]
 layout_mode = 2
 text = "Found."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Button" type="Button" parent="Level Complete/Margin/Panel/VBox"]
+[node name="Button" type="Button" parent="Level Complete/Margin/HBox/Panel/VBox"]
 custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 focus_mode = 0
 text = "Go To Levels Menu"
 
+[node name="Spacer" type="Container" parent="Level Complete/Margin/HBox"]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+
+[node name="Leader Board" type="TabContainer" parent="Level Complete/Margin/HBox"]
+material = ExtResource("13_nh5o4")
+custom_minimum_size = Vector2(235, 320)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tab_alignment = 1
+tab_focus_mode = 0
+script = ExtResource("16_med0f")
+
+[node name="Personal" type="TabBar" parent="Level Complete/Margin/HBox/Leader Board"]
+layout_mode = 2
+
+[node name="Board" type="HBoxContainer" parent="Level Complete/Margin/HBox/Leader Board/Personal"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Rank" type="VBoxContainer" parent="Level Complete/Margin/HBox/Leader Board/Personal/Board"]
+layout_mode = 2
+
+[node name="Header" type="Label" parent="Level Complete/Margin/HBox/Leader Board/Personal/Board/Rank"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+text = "Rank"
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Level Complete/Margin/HBox/Leader Board/Personal/Board/Rank"]
+layout_mode = 2
+
+[node name="VSeparator1" type="VSeparator" parent="Level Complete/Margin/HBox/Leader Board/Personal/Board"]
+layout_mode = 2
+
+[node name="Name" type="VBoxContainer" parent="Level Complete/Margin/HBox/Leader Board/Personal/Board"]
+layout_mode = 2
+
+[node name="Header" type="Label" parent="Level Complete/Margin/HBox/Leader Board/Personal/Board/Name"]
+custom_minimum_size = Vector2(120, 30)
+layout_mode = 2
+text = "Name"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Level Complete/Margin/HBox/Leader Board/Personal/Board/Name"]
+layout_mode = 2
+
+[node name="VSeparator2" type="VSeparator" parent="Level Complete/Margin/HBox/Leader Board/Personal/Board"]
+layout_mode = 2
+
+[node name="Score" type="VBoxContainer" parent="Level Complete/Margin/HBox/Leader Board/Personal/Board"]
+layout_mode = 2
+
+[node name="Header" type="Label" parent="Level Complete/Margin/HBox/Leader Board/Personal/Board/Score"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+text = "Score"
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Level Complete/Margin/HBox/Leader Board/Personal/Board/Score"]
+layout_mode = 2
+
+[node name="Global" type="TabBar" parent="Level Complete/Margin/HBox/Leader Board"]
+visible = false
+layout_mode = 2
+
+[node name="Board" type="HBoxContainer" parent="Level Complete/Margin/HBox/Leader Board/Global"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Rank" type="VBoxContainer" parent="Level Complete/Margin/HBox/Leader Board/Global/Board"]
+layout_mode = 2
+
+[node name="Header" type="Label" parent="Level Complete/Margin/HBox/Leader Board/Global/Board/Rank"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+text = "Rank"
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Level Complete/Margin/HBox/Leader Board/Global/Board/Rank"]
+layout_mode = 2
+
+[node name="VSeparator1" type="VSeparator" parent="Level Complete/Margin/HBox/Leader Board/Global/Board"]
+layout_mode = 2
+
+[node name="Name" type="VBoxContainer" parent="Level Complete/Margin/HBox/Leader Board/Global/Board"]
+layout_mode = 2
+
+[node name="Header" type="Label" parent="Level Complete/Margin/HBox/Leader Board/Global/Board/Name"]
+custom_minimum_size = Vector2(120, 30)
+layout_mode = 2
+text = "Name"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Level Complete/Margin/HBox/Leader Board/Global/Board/Name"]
+layout_mode = 2
+
+[node name="VSeparator2" type="VSeparator" parent="Level Complete/Margin/HBox/Leader Board/Global/Board"]
+layout_mode = 2
+
+[node name="Score" type="VBoxContainer" parent="Level Complete/Margin/HBox/Leader Board/Global/Board"]
+layout_mode = 2
+
+[node name="Header" type="Label" parent="Level Complete/Margin/HBox/Leader Board/Global/Board/Score"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+text = "Score"
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Level Complete/Margin/HBox/Leader Board/Global/Board/Score"]
+layout_mode = 2
+
 [connection signal="button_up" from="Level Buttons/Level Select Button" to="." method="gotoLevelSelect"]
 [connection signal="button_up" from="Level Buttons/Undo Button" to="Objects" method="statePop"]
 [connection signal="button_up" from="Level Buttons/Restart Button" to="Objects" method="stateUnwind"]
-[connection signal="pressed" from="Level Complete/Margin/Panel/VBox/Button" to="Level Complete" method="goBack"]
+[connection signal="visibility_changed" from="Level Complete" to="Level Complete/Margin/HBox/Leader Board" method="visibilityChanged"]
+[connection signal="pressed" from="Level Complete/Margin/HBox/Panel/VBox/Button" to="Level Complete" method="goBack"]

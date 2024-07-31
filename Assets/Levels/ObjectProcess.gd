@@ -12,11 +12,12 @@ enum EntityTileType {
 	EntityTileType_End,
 };
 
+var levelComplete : bool = false;
 func onEntityMove(entityType : EntityTileType, from : Vector2i, to : Vector2i) -> void:
 	match (entityType):
 		EntityTileType.EntityTileType_Player:
 			if (to == endPos):
-				$"../Level Complete".levelComplete();
+				levelComplete = true;
 		
 		EntityTileType.EntityTileType_Light:
 			$Lighting.moveEmitter(from, to);
@@ -185,11 +186,12 @@ func updateLighting():
 		postLightingUpdateNeeded = true;
 	
 		if (!door.open):
-			$Entities.set_cell(
-				0, door.position, 
-				0,
-				Vector2i((door.color & Lighting.LightingValueColorMask) + 8, 1 if door.color & Lighting.LightingValueShadowMask else 0),
-			);
+			if (getEntityTileType(door.position) == EntityTileType.EntityTileType_None):
+				$Entities.set_cell(
+					0, door.position, 
+					0,
+					Vector2i((door.color & Lighting.LightingValueColorMask) + 8, 1 if door.color & Lighting.LightingValueShadowMask else 0),
+				);
 			$BackgroundEntities.set_cell(0, door.position);
 		else:
 			$BackgroundEntities.set_cell(
@@ -197,7 +199,8 @@ func updateLighting():
 				0,
 				Vector2i((door.color & Lighting.LightingValueColorMask) + 6, 1 if door.color & Lighting.LightingValueShadowMask else 0),
 			);
-			$Entities.set_cell(0, door.position);
+			if (getEntityTileType(door.position) == EntityTileType.EntityTileType_DoorClose):
+				$Entities.set_cell(0, door.position);
 	
 	if (postLightingUpdateNeeded):
 		$Lighting.updateLighting();
@@ -431,7 +434,11 @@ func stateAddMovement(movement : Vector2i, affectedTiles : Array[Vector2i]):
 	stateGotoNext();
 	
 func updateMoveCountText(): 
-	$"../Stats/Move Count".text = "Move Count: " + str(states.size());
+	var moveCount : int = states.size();
+	$"../Stats/Move Count".text = "Move Count: " + str(moveCount);
+	LeaderBoard.levelScore = moveCount;
+	if (levelComplete):
+		$"../Level Complete".levelComplete();
 	
 func stateAddWiring(pos : Vector2i, state : bool):
 	if (!stateTracking): return;

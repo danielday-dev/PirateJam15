@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://dc1f2ce4tmjiu"]
+[gd_scene load_steps=6 format=3 uid="uid://dc1f2ce4tmjiu"]
 
 [ext_resource type="Theme" uid="uid://cuj4xxk1q18g6" path="res://Assets/GUI/MainTheme.tres" id="1_6v3vl"]
 [ext_resource type="PackedScene" uid="uid://8bn5wiq2ayda" path="res://Assets/LevelSelect/LevelGoto.tscn" id="1_ar7pr"]
 [ext_resource type="Script" path="res://Assets/LevelSelect/LevelSelect.gd" id="1_re3p7"]
 [ext_resource type="Material" uid="uid://b86ugiwyyg5jt" path="res://Assets/Background/Background.tres" id="4_1vpcj"]
+[ext_resource type="Script" path="res://Assets/LevelSelect/Username.gd" id="5_bho12"]
 
 [node name="LevelSelector" type="Control"]
 layout_mode = 3
@@ -57,3 +58,24 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
 columns = 4
+
+[node name="Settings" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="VBox/Settings"]
+layout_mode = 2
+text = "Leader Board Name (Blank to ignore)
+"
+
+[node name="Username" type="LineEdit" parent="VBox/Settings"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+placeholder_text = "[USERNAME]"
+alignment = 1
+max_length = 9
+caret_blink = true
+script = ExtResource("5_bho12")
+
+[connection signal="mouse_exited" from="VBox/Settings/Username" to="VBox/Settings/Username" method="_onMouseExit"]
+[connection signal="text_changed" from="VBox/Settings/Username" to="VBox/Settings/Username" method="_onTextChanged"]
