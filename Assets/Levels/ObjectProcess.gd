@@ -230,6 +230,11 @@ func processInput():
 	if (Input.is_action_just_pressed("player_restart")):
 		stateUnwind();
 		return;
+		
+	# Escape to level select button.
+	if (Input.is_action_just_pressed("player_backToLevels")):
+		$"../".gotoLevelSelect();
+		return;
 	
 	var movement : Vector2i = Vector2i(
 		Input.get_axis("player_movement_left", "player_movement_right"),
