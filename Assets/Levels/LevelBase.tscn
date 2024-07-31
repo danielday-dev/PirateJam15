@@ -61,16 +61,16 @@ metadata/_edit_lock_ = true
 script = ExtResource("7_qv88h")
 metadata/_edit_lock_ = true
 
-[node name="GUI" type="Node2D" parent="."]
+[node name="Level Buttons" type="Node2D" parent="."]
 
-[node name="Level Select Button" type="Button" parent="GUI"]
+[node name="Level Select Button" type="Button" parent="Level Buttons"]
 offset_right = 72.0
 offset_bottom = 36.0
 focus_mode = 0
 theme = ExtResource("10_ychug")
 text = "Levels"
 
-[node name="Undo Button" type="Button" parent="GUI"]
+[node name="Undo Button" type="Button" parent="Level Buttons"]
 offset_top = 48.0
 offset_right = 72.0
 offset_bottom = 84.0
@@ -79,7 +79,7 @@ theme = ExtResource("10_ychug")
 text = "Undo
 "
 
-[node name="Restart Button" type="Button" parent="GUI"]
+[node name="Restart Button" type="Button" parent="Level Buttons"]
 offset_top = 96.0
 offset_right = 72.0
 offset_bottom = 132.0
@@ -88,6 +88,24 @@ theme = ExtResource("10_ychug")
 text = "Restart
 "
 
-[connection signal="button_up" from="GUI/Level Select Button" to="." method="gotoLevelSelect"]
-[connection signal="button_up" from="GUI/Undo Button" to="Objects" method="statePop"]
-[connection signal="button_up" from="GUI/Restart Button" to="Objects" method="stateUnwind"]
+[node name="Stats" type="Node2D" parent="."]
+
+[node name="Move Count" type="Label" parent="Stats"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -53.0
+offset_top = -23.0
+offset_right = 53.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("10_ychug")
+text = "Move Count: 0"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[connection signal="button_up" from="Level Buttons/Level Select Button" to="." method="gotoLevelSelect"]
+[connection signal="button_up" from="Level Buttons/Undo Button" to="Objects" method="statePop"]
+[connection signal="button_up" from="Level Buttons/Restart Button" to="Objects" method="stateUnwind"]

@@ -332,7 +332,7 @@ func processAnimation(delta):
 # Honestly, should've thought about this earlier. 
 # So here it is,, in the big ol' main file.
 
-var states : Array[Array] = [[]]
+var states : Array[Array] = []
 var activeState : Array[Dictionary] = []
 
 enum StateType {
@@ -343,6 +343,7 @@ enum StateType {
 func stateGotoNext():
 	states.push_back(activeState);
 	activeState = [];
+	updateMoveCountText();
 
 var stateTracking : bool = true;
 func statePop():
@@ -396,6 +397,7 @@ func statePop():
 		updateLighting();
 	
 	stateTracking = true;
+	updateMoveCountText();
 
 func stateUnwind():
 	# This is cursed and i think its hilarious
@@ -411,6 +413,9 @@ func stateAddMovement(movement : Vector2i, affectedTiles : Array[Vector2i]):
 		"affectedTiles": affectedTiles
 	});
 	stateGotoNext();
+	
+func updateMoveCountText(): 
+	$"../Stats/Move Count".text = "Move Count: " + str(states.size());
 	
 func stateAddWiring(pos : Vector2i, state : bool):
 	if (!stateTracking): return;

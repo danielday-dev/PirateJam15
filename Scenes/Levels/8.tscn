@@ -56,5 +56,8 @@ layer_0/tile_data = PackedInt32Array(327679, 0, 2, 196612, 131072, 3, -131071, 3
 [node name="Wiring" parent="Objects" index="6"]
 connections = Array[ExtResource("2_lt8a5")]([SubResource("Resource_4tppy"), SubResource("Resource_xaog2"), SubResource("Resource_jf4uc"), SubResource("Resource_mxs1a"), SubResource("Resource_8q1ng"), SubResource("Resource_xevqy")])
 
-[node name="GUI" parent="." index="2"]
+[node name="Level Buttons" parent="." index="2"]
 position = Vector2(-276, 24)
+
+[node name="Stats" parent="." index="3"]
+position = Vector2(72, -120)
