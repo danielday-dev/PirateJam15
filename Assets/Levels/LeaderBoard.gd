@@ -5,6 +5,10 @@ static var username : String = "";
 static var levelName : String = "1";
 static var levelScore : int = 1;
 
+const requestHeaders : Array[String] = [ 
+	"Content-Type: application/json", 
+	"Access-Control-Allow-Origin: *"
+];
 var getRequest : HTTPRequest;
 var submitRequest : HTTPRequest;
 func _ready():
@@ -52,7 +56,7 @@ func submitScore():
 		"score": levelScore, 
 		"key": "PLEASE DONT BE A GREMLIN AND CHEAT THE SYSTEM,, NAUGHTY FELLA",
 	});
-	var error = submitRequest.request("https://piratejam15.jawdan.dev/postLeaderboard/", [ "Content-Type: application/json" ], HTTPClient.METHOD_POST, body)
+	var error = submitRequest.request("https://piratejam15.jawdan.dev/postLeaderboard/", requestHeaders, HTTPClient.METHOD_POST, body)
 	if error != OK: push_error("An error occurred in the HTTP request.")
 
 func getLeaderBoardInformation():
@@ -61,7 +65,7 @@ func getLeaderBoardInformation():
 		"name": username,
 		"key": "THIS ONE ISNT SO BAD TO SORTA USE,,",
 	});
-	var error = getRequest.request("https://piratejam15.jawdan.dev/getLeaderboard/", [ "Content-Type: application/json" ], HTTPClient.METHOD_POST, body)
+	var error = getRequest.request("https://piratejam15.jawdan.dev/getLeaderboard/", requestHeaders, HTTPClient.METHOD_POST, body)
 	if error != OK: push_error("An error occurred in the HTTP request.")
 	
 func addLeaderBoardEntry(board : Control, rank : int, name : String, score : int):
