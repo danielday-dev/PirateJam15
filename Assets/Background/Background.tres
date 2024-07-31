@@ -5,5 +5,5 @@
 
 [resource]
 shader = ExtResource("1_5w6rt")
-shader_parameter/backgroundImageRatio = 0.422
+shader_parameter/movementSpeed = 0.01
 shader_parameter/backgroundImage = ExtResource("2_8a5tc")
