@@ -17,13 +17,14 @@ func getFilePathsByExtension(directoryPath: String, extension: String, recursive
 	var fileName = dir.get_next()
 
 	while fileName != "":
+		fileName = fileName.trim_suffix(".remap");
 		if dir.current_is_dir():
 			if recursive:
 				var dirPath = dir.get_current_dir() + "/" + fileName
 				filePaths += getFilePathsByExtension(dirPath, extension, recursive)
 		elif fileName.get_extension() == extension:
 			var filePath = dir.get_current_dir() + "/" + fileName;
-			filePaths.append(filePath);
+			filePaths.push_back(filePath);
 		fileName = dir.get_next()
 
 	return filePaths
