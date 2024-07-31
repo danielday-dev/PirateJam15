@@ -28,6 +28,7 @@ func getFilePathsByExtension(directoryPath: String, extension: String, recursive
 
 	return filePaths
 
+var gotos : Dictionary = {};
 func _ready():
 	if (levelGoto == null):
 		printerr("LevelGoto instance not specified.");
@@ -46,3 +47,9 @@ func _ready():
 		var instance : Control = levelGoto.instantiate();
 		instance.setLevel(levelNames[i], levelPaths[i]);
 		$VBox/Grid.add_child(instance);
+		gotos[levelNames[i]] = instance;
+
+func completeLevel(levelName : String):
+	if (!gotos.has(levelName)): return;
+	gotos[levelName].showArtefact();
+	

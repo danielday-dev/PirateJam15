@@ -9,5 +9,10 @@ func _ready():
 	var zoom = min(zoomRaw.x, zoomRaw.y);
 	$Camera.zoom = Vector2(zoom, zoom); 
 
-func gotoLevelSelect():
-	get_tree().change_scene_to_file("res://Scenes/LevelSelect.tscn");
+func gotoLevelSelect(completed : bool = false):
+	var children : Array[Node] = get_tree().root.get_children();
+	print(children.back().name);
+	children.back().queue_free();
+	
+	if (completed):
+		get_tree().root.get_child(0).completeLevel(self.name);

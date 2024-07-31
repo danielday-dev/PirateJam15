@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://ceox7v6p25unb"]
+[gd_scene load_steps=17 format=3 uid="uid://ceox7v6p25unb"]
 
 [ext_resource type="TileSet" uid="uid://c1tgrgs3ys4wn" path="res://Assets/Levels/Tilesets/Walls.tres" id="1_7reon"]
 [ext_resource type="Script" path="res://Assets/Levels/Level.gd" id="1_rok26"]
@@ -11,12 +11,17 @@
 [ext_resource type="Material" uid="uid://b86ugiwyyg5jt" path="res://Assets/Background/Background.tres" id="5_vi568"]
 [ext_resource type="Script" path="res://Assets/Levels/Wiring.gd" id="7_qv88h"]
 [ext_resource type="Theme" uid="uid://cuj4xxk1q18g6" path="res://Assets/GUI/MainTheme.tres" id="10_ychug"]
+[ext_resource type="Script" path="res://Scenes/Levels/LevelComplete.gd" id="12_olgnu"]
+[ext_resource type="Material" uid="uid://crxfalfjr0jag" path="res://Assets/GUI/MenuBlurLight.tres" id="13_34gyf"]
+[ext_resource type="Texture2D" uid="uid://b7p5su588l7yl" path="res://Assets/Artefacts/0.png" id="13_jbymt"]
+[ext_resource type="Material" uid="uid://uqnhojnx3uma" path="res://Assets/GUI/MenuBlur.tres" id="13_nh5o4"]
 
 [sub_resource type="Curve" id="Curve_214x6"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.554585, 0.241758), 0.0, 0.0, 0, 0, Vector2(1, 1), 5.17277, 0.0, 0, 0]
 point_count = 3
 
 [node name="Level" type="Node2D"]
+z_index = 2
 script = ExtResource("1_rok26")
 
 [node name="Camera" type="Camera2D" parent="."]
@@ -106,6 +111,80 @@ text = "Move Count: 0"
 horizontal_alignment = 1
 vertical_alignment = 2
 
+[node name="Level Complete" type="CanvasLayer" parent="."]
+visible = false
+script = ExtResource("12_olgnu")
+
+[node name="Margin" type="PanelContainer" parent="Level Complete"]
+material = ExtResource("13_34gyf")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("10_ychug")
+
+[node name="Panel" type="PanelContainer" parent="Level Complete/Margin"]
+material = ExtResource("13_nh5o4")
+custom_minimum_size = Vector2(300, 290)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBox" type="VBoxContainer" parent="Level Complete/Margin/Panel"]
+layout_mode = 2
+
+[node name="Artefact" type="TextureRect" parent="Level Complete/Margin/Panel/VBox"]
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("13_jbymt")
+stretch_mode = 5
+
+[node name="VBox" type="VBoxContainer" parent="Level Complete/Margin/Panel/VBox"]
+layout_mode = 2
+
+[node name="Artefact" type="Label" parent="Level Complete/Margin/Panel/VBox/VBox"]
+layout_mode = 2
+text = "Artefact"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Background" type="ColorRect" parent="Level Complete/Margin/Panel/VBox/VBox"]
+custom_minimum_size = Vector2(240, 35)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+color = Color(0, 0, 0, 1)
+
+[node name="ArtefactName" type="Label" parent="Level Complete/Margin/Panel/VBox/VBox/Background"]
+custom_minimum_size = Vector2(200, 12)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 50
+text = "- ??? -"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Found" type="Label" parent="Level Complete/Margin/Panel/VBox/VBox"]
+layout_mode = 2
+text = "Found."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="Level Complete/Margin/Panel/VBox"]
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+text = "Go To Levels Menu"
+
 [connection signal="button_up" from="Level Buttons/Level Select Button" to="." method="gotoLevelSelect"]
 [connection signal="button_up" from="Level Buttons/Undo Button" to="Objects" method="statePop"]
 [connection signal="button_up" from="Level Buttons/Restart Button" to="Objects" method="stateUnwind"]
+[connection signal="pressed" from="Level Complete/Margin/Panel/VBox/Button" to="Level Complete" method="goBack"]

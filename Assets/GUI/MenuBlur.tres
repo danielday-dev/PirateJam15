@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://uqnhojnx3uma"]
+
+[ext_resource type="Shader" path="res://Assets/GUI/MenuBlur.gdshader" id="1_wmpeu"]
+
+[resource]
+shader = ExtResource("1_wmpeu")
+shader_parameter/blurAmount = 5.0
+shader_parameter/backgroundColor = Color(0.133333, 0.113725, 0.239216, 1)
+shader_parameter/backgroundFactor = 0.8

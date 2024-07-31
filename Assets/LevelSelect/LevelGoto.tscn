@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://8bn5wiq2ayda"]
+[gd_scene load_steps=4 format=3 uid="uid://8bn5wiq2ayda"]
 
 [ext_resource type="Script" path="res://Assets/LevelSelect/LevelGoto.gd" id="1_8uwbe"]
+[ext_resource type="Theme" uid="uid://cuj4xxk1q18g6" path="res://Assets/GUI/MainTheme.tres" id="2_miq28"]
+[ext_resource type="Texture2D" uid="uid://b7p5su588l7yl" path="res://Assets/Artefacts/0.png" id="3_iq1q1"]
 
 [node name="Level Goto" type="Button"]
 custom_minimum_size = Vector2(56, 56)
@@ -16,7 +18,24 @@ offset_bottom = 28.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
+theme = ExtResource("2_miq28")
 text = "?"
 script = ExtResource("1_8uwbe")
+
+[node name="Artefact" type="TextureRect" parent="."]
+visible = false
+z_index = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -19.0
+offset_top = -12.0
+offset_right = 13.0
+offset_bottom = 20.0
+grow_horizontal = 0
+texture = ExtResource("3_iq1q1")
+expand_mode = 3
+stretch_mode = 5
 
 [connection signal="button_up" from="." to="." method="onGotoLevel"]

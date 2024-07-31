@@ -9,12 +9,14 @@ enum EntityTileType {
 	EntityTileType_LightButton,
 	EntityTileType_DoorOpen,
 	EntityTileType_DoorClose,
+	EntityTileType_End,
 };
 
 func onEntityMove(entityType : EntityTileType, from : Vector2i, to : Vector2i) -> void:
 	match (entityType):
 		EntityTileType.EntityTileType_Player:
-			return;
+			if (to == endPos):
+				$"../Level Complete".levelComplete();
 		
 		EntityTileType.EntityTileType_Light:
 			$Lighting.moveEmitter(from, to);
@@ -65,6 +67,7 @@ func getEntityTileType(pos : Vector2i) -> EntityTileType:
 func getBackgroundEntityTypeFromAtlas(atlas : Vector2i) -> EntityTileType:
 	match (atlas.x):
 		0, 1, 2, 3, 4, 5, 6: return EntityTileType.EntityTileType_LightButton;
+		14: return EntityTileType.EntityTileType_End;
 	return EntityTileType.EntityTileType_None;
 	
 func getBackgroundEntityTileType(pos : Vector2i) -> EntityTileType:
@@ -112,6 +115,7 @@ class Door:
 		color = _color;
 		open = false;
 
+var endPos : Vector2i = Vector2i(9999, 9999);
 var lightButtons : Array[LightButton];
 var doors : Array[Door];
 func registerLighting():
@@ -150,6 +154,9 @@ func registerLighting():
 					if (buttonCoord.y >= 2): color |= Lighting.LightingValue.Shadow;
 					
 					lightButtons.push_back(LightButton.new(pos, color));
+					
+				EntityTileType.EntityTileType_End:
+					endPos = pos;
 
 func updateLighting():
 	$Lighting.updateLighting();
@@ -203,6 +210,10 @@ func _ready():
 	activeState.clear();
 	
 func _process(delta):
+	if ($"../Level Complete".visible):
+		set_process(false);
+		return;
+	
 	if (animationProcessing): 
 		processAnimation(delta);
 	else: 
